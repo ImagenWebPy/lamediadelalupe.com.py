@@ -576,282 +576,42 @@ class Helper {
      * FUNCIONES DEL INHERENTES AL SISTEMA
      * ****************************** */
 
-    /**
-     * Funcion que retorna los enlaces a redes sociales,
-     * parametro opcional cantidad de resultados ($limit)
-     * @param int $limit
-     * @return array
-     */
-    public function obtenerRedes($limit = NULL) {
-        $limite = (!empty($limit)) ? "LIMIT $limit" : '';
+    public function mostrarMenu() {
         $sql = $this->db->select("SELECT
                                         descripcion,
-                                        url,
-                                        fontawesome
+                                        id_menu
+                                FROM
+                                        menu
+                                WHERE
+                                        estado = 1
+                                ORDER BY
+                                        orden ASC;");
+        return $sql;
+    }
+
+    public function mostrarRedes() {
+        $sql = $this->db->select("SELECT
+                                        descripcion,
+                                        fontawesome,
+                                        url
                                 FROM
                                         redes
                                 WHERE
                                         estado = 1
                                 ORDER BY
-                                        orden ASC
-                                $limite");
-        return $sql;
-    }
-
-    /**
-     * Funcion que retorna el contenido del slider
-     * @return array
-     */
-    public function obtenerSlider() {
-        $sql = $this->db->select("SELECT
-                                        imagen,
-                                        titulo,
-                                        texto_complementario
-                                FROM
-                                        slider
-                                WHERE
-                                        estado = 1
-                                ORDER BY
                                         orden ASC");
         return $sql;
     }
 
-    /**
-     * Funcion que retorna el contenido de la seccion 1 de la pagina de inicio
-     * @return array
-     */
-    public function index_seccion_1() {
-        $sql = $this->db->select("SELECT
-                                        titulo,
-                                        contenido
-                                FROM
-                                        index_seccion_1
-                                WHERE
-                                        estado = 1
-                                AND id = 1;");
-        return $sql[0];
-    }
-
-    public function index_seccion_2() {
-        $sql = $this->db->select("SELECT
-                                        titulo,
-                                        contenido,
-                                        fontawesome
-                                FROM
-                                        index_seccion_2
-                                WHERE
-                                        estado = 1
-                                ORDER BY
-                                        orden ASC");
-        return $sql;
-    }
-
-    /**
-     * Funcion que retorna el contenido de la seccion 3 de la pagina de inicio
-     * @return array
-     */
-    public function index_seccion_3() {
-        $sql = $this->db->select("SELECT
-                                        titulo,
-                                        subtitulo,
-                                        descripcion,
-                                        imagen,
-                                        titulo_cuadro,
-                                        descripcion_cuadro
-                                FROM
-                                        index_seccion_3
-                                WHERE
-                                        id = 1
-                                AND estado = 1");
-        return $sql[0];
-    }
-
-    /**
-     * Funcion que retorna el contenido de la seccion 4 de la pagina de inicio
-     * @return array
-     */
-    public function index_seccion_4() {
-        $sql = $this->db->select("SELECT
-                                        titulo,
-                                        subtitulo,
-                                        descripcion,
-                                        imagen
-                                FROM
-                                        index_seccion_4
-                                WHERE
-                                        id = 1
-                                AND estado = 1");
-        return $sql[0];
-    }
-
-    /**
-     * Funcion que retorna el contenido de la seccion 5 de la pagina de inicio
-     * @return array
-     */
-    public function index_seccion_5() {
-        $sql = $this->db->select("SELECT
-                                        titulo,
-                                        subtitulo
-                                FROM
-                                        index_seccion_5
-                                WHERE
-                                        id = 1
-                                AND estado = 1");
-        return $sql[0];
-    }
-
-    /**
-     * Funcion que retorna los colaboradores de la empresa por orden ascendente
-     * @return array
-     */
-    public function mostrar_equipo_trabajo() {
-        $sql = $this->db->select("SELECT
-                                        id,
-                                        nombre,
-                                        cargo,
-                                        email,
-                                        telefono,
-                                        imagen,
-                                        mostrar_email,
-                                        mostrar_telefono
-                                FROM
-                                        equipo
-                                WHERE
-                                        estado = 1
-                                ORDER BY
-                                        orden ASC");
-        return $sql;
-    }
-
-    public static function obtenerRedesEquipo($id_equipo) {
-        require_once 'util/Helper.php';
-        $db = new Database(DB_TYPE, DB_HOST, DB_NAME, DB_USER, DB_PASS);
-        $sql = $db->select("SELECT
-                                        red_social,
-                                        url,
-                                        fontawesome
-                                FROM
-                                        equipo_redsocial
-                                WHERE
-                                        id_equipo = $id_equipo
-                                AND estado = 1
-                                ORDER BY
-                                        orden ASC");
-        return $sql;
-    }
-
-    public function getErrorContenido() {
-        $sql = $this->db->select("SELECT
-                                        titulo,
-                                        texto_1,
-                                        texto_2,
-                                        imagen
-                                FROM
-                                        error
-                                WHERE
-                                        id = 1");
-        return $sql[0];
-    }
-
-    public function getLogos() {
-        $sql = $this->db->select("select * from logos where id = 1");
-        return $sql[0];
-    }
-
-    public function getInfoFooter() {
-        $sql = $this->db->select("SELECT SUBSTR(contenido,1,300) as contenido from empresa");
-        return strip_tags($sql[0]['contenido']);
-    }
-
-    public function getMetaTags($url) {
+    public function datosInicio() {
         $data = array();
-        $title = '';
-        $description = '';
-        $keywords = '';
-        $controlador = (!empty($url[0])) ? $url[0] : '';
-        switch ($controlador) {
-            case 'pantallas_led':
-                $sql = $this->db->select("select title, description, keywords from pantallas_led where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-            case 'carteles_tradicionales':
-                switch ($url[1]) {
-                    case 'asuncion':
-                        $sql = $this->db->select("select title, description, keywords from carteles_tradicionales where seccion = 'Asuncion'");
-                        $title = utf8_encode($sql[0]['title']);
-                        $description = utf8_encode($sql[0]['description']);
-                        $keywords = utf8_encode($sql[0]['keywords']);
-                        break;
-                    case 'gran_asuncion':
-                        $sql = $this->db->select("select title, description, keywords from carteles_tradicionales where seccion = 'Gran Asuncion'");
-                        $title = utf8_encode($sql[0]['title']);
-                        $description = utf8_encode($sql[0]['description']);
-                        $keywords = utf8_encode($sql[0]['keywords']);
-                        break;
-                    case 'ruteros':
-                        $sql = $this->db->select("select title, description, keywords from carteles_tradicionales where seccion = 'Ruteros'");
-                        $title = utf8_encode($sql[0]['title']);
-                        $description = utf8_encode($sql[0]['description']);
-                        $keywords = utf8_encode($sql[0]['keywords']);
-                        break;
-                    case 'urbanos':
-                        $sql = $this->db->select("select title, description, keywords from carteles_tradicionales where seccion = 'Urbanos'");
-                        $title = utf8_encode($sql[0]['title']);
-                        $description = utf8_encode($sql[0]['description']);
-                        $keywords = utf8_encode($sql[0]['keywords']);
-                        break;
-                }
-                break;
-            case 'iconicos':
-                $sql = $this->db->select("select title, description, keywords from iconicos where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-            case 'buses':
-                $sql = $this->db->select("select title, description, keywords from buses where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-            case 'cobertura':
-                $sql = $this->db->select("select title, description, keywords from cobertura where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-            case 'metricas':
-                $sql = $this->db->select("select title, description, keywords from metricas where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-            case 'empresa':
-                $sql = $this->db->select("select title, description, keywords from empresa where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-            case 'contacto':
-                $sql = $this->db->select("select title, description, keywords from contacto where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-            default :
-                $sql = $this->db->select("select title, description, keywords from index_meta where id = 1");
-                $title = utf8_encode($sql[0]['title']);
-                $description = utf8_encode($sql[0]['description']);
-                $keywords = utf8_encode($sql[0]['keywords']);
-                break;
-        }
-
+        $sqlImagenes = $this->db->select("SELECT imagen FROM inicio_imagenes where estado = 1 ORDER BY orden ASC;");
+        $sqlTextos = $this->db->select("select texto from inicio_textos where estado = 1 ORDER BY orden ASC;");
+        $sqlContenido = $this->db->select("SELECT titulo, contenido FROM inicio_contenido where id = 1;");
         $data = array(
-            'description' => $title,
-            'keywords' => $description,
-            'title' => $keywords
+            'imagenes' => $sqlImagenes,
+            'textos' => $sqlTextos,
+            'contenido' => $sqlContenido[0]
         );
         return $data;
     }

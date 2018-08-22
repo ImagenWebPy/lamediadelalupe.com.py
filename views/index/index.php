@@ -1,76 +1,33 @@
 <!-- BEGIN: Page content -->
-<section id="home">
+<section id="<?= $this->mostrarMenu[0]['id_menu']; ?>">
     <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
+        <?php foreach ($this->datosInicio['imagenes'] as $imagenes): ?>
+            <img alt class="bg" src="<?= URL; ?>public/images/inicio/<?= $imagenes['imagen']; ?>" />
+        <?php endforeach; ?>
         <div class="content home-alice full-size colors-a background-transparent">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-5 col-md-offset-1">
                         <div class="text-right textillate heading  hidden-xs hidden-sm" data-textillate-options="{loop:true, in:{effect:'flipInY', reverse:true}, out:{effect:'flipOutY', reverse:true}}">
                             <ul class="texts">
-                                <li>We Are Designers</li>
-                                <li>We Are Programmers</li>
-                                <li>We Are Coders</li>
-                                <li>We Are Developers</li>
-                                <li>We Are Creative</li>
+                                <?php foreach ($this->datosInicio['textos'] as $textos): ?>
+                                    <li><?= utf8_encode($textos['texto']); ?></li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
-                        <h1 class="heading text-right">SKROLLEX</h1>
+                        <h1 class="heading text-right"><?= utf8_encode($this->datosInicio['contenido']['titulo']); ?></h1>
                         <p class="text-right title">
-                            Integer ligula ante, posuere et ante quis, eleifend eleifend ipsum. In sed odio mi. Vivamus dapibus gravida facilisis. In hac habitasse platea dictumst. Aliquam tincidunt ultricies enim sed pellentesque. In in mi in libero laoreet ultricies. Phasellus non metus dolor parturient vitae neque venenatis.
+                            <?= utf8_encode($this->datosInicio['contenido']['contenido']); ?>
                         </p>
-                        <p class="text-right"><a href="#about" class="button background-60-d heading-d">About Us</a><a href="#work" class="button background-60-f heading-f">Our Work</a></p>
+                        <p class="text-right"><a href="#<?= $this->mostrarMenu[1]['id_menu']; ?>" class="button background-60-d heading-d"><?= utf8_encode($this->mostrarMenu[1]['descripcion']); ?></a><a href="#work" class="button background-60-f heading-f">Our Work</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<section id="about">
+<section id="<?= $this->mostrarMenu[1]['id_menu']; ?>">
     <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" />
-        <div class="content pane">
-            <div class="container-fluid">
-                <div class="row hidden-xs hidden-sm">
-                    <div class="col-md-4 colors-b">
-                        <div class="row">
-                            <div class="col-xs-12 banner-cell">
-                                <h3 class="light-font-weight">Responsive</h3>
-                                <p class="title">Layout</p>
-                            </div>
-                            <div class="col-xs-12 success heading-b banner-cell">
-                                Responsive Styling
-                                <br /> Retina Ready
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 colors-c">
-                        <div class="row">
-                            <div class="col-xs-12 banner-cell">
-                                <h3 class="light-font-weight">Parallax</h3>
-                                <p class="title">Effects</p>
-                            </div>
-                            <div class="col-xs-12 warning heading-c banner-cell">
-                                Highly Optimized
-                                <br /> Smooth Animations
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 colors-d">
-                        <div class="row">
-                            <div class="col-xs-12 banner-cell">
-                                <h3 class="light-font-weight">Bootstrap</h3>
-                                <p class="title">Framework</p>
-                            </div>
-                            <div class="col-xs-12 info heading-d banner-cell">
-                                Adapted for Multicolor Sections
-                                <br /> Highly Customized
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="view">
         <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
@@ -155,7 +112,7 @@
         </div>
     </div>
 </section>
-<section id="team">
+<section>
     <div class="view">
         <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" />
         <div class="content colors-e">
@@ -310,7 +267,7 @@
         </div>
     </div>
 </section>
-<section id="services">
+<section id="<?= $this->mostrarMenu[2]['id_menu']; ?>">
     <div class="view">
         <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
         <div class="content colors-e">
@@ -404,7 +361,7 @@
         </div>
     </div>
 </section>
-<section id="work">
+<section id="<?= $this->mostrarMenu[4]['id_menu']; ?>">
     <div class="view">
         <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" />
         <div class="content no-bottom-padding colors-e">
@@ -734,7 +691,7 @@
         </div>
     </div>
 </section>
-<section id="contact">
+<section id="<?= $this->mostrarMenu[6]['id_menu']; ?>">
     <div class="view">
         <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" />
         <div class="content full-size colors-h">

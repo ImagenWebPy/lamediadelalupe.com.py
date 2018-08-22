@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Skrollex</title>
+        <title><?= $this->title; ?></title>
         <meta name="description" content="Onepage Parallax Site" />
         <meta name="keywords" content="onepage, parallax" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -72,14 +72,12 @@
                 </div>
             </div>
         </div>
-        <div class="page-border bottom colors-e background-solid"><a href="#top" class="hover-effect">To <span class="highlight">Top</span></a></div>
+        <div class="page-border bottom colors-e background-solid"><a href="#top" class="hover-effect">Al <span class="highlight">Inicio</span></a></div>
         <div class="page-border left colors-e background-solid">
             <ul>
-                <li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="https://twitter.com/" target="_blank"><i class="fa fa-twitter"></i></a></li>
-                <li><a href="http://www.youtube.com/" target="_blank"><i class="fa fa-youtube"></i></a></li>
-                <li><a href="https://vimeo.com/" target="_blank"><i class="fa fa-vimeo-square"></i></a></li>
-                <li><a href="http://www.skype.com/" target="_blank"><i class="fa fa-skype"></i></a></li>
+                <?php foreach ($this->mostrarRedes as $red): ?>
+                    <li><a href="<?= utf8_encode($red['url']); ?>" target="_blank" title="<?= utf8_encode($red['descripcion']); ?>"><i class="<?= utf8_encode($red['fontawesome']); ?>"></i></a></li>
+                <?php endforeach; ?>
             </ul>
         </div>
         <!-- BEGIN: Top menu -->
@@ -89,18 +87,13 @@
                 <div class="navbar-header">
                     <a class="menu-toggle ext-nav-toggle visible-xs-block" data-target=".ext-nav" href="#"><span></span></a>
                     <a class="menu-toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" href="#"><span></span></a>
-                    <a class="navbar-brand" href="">SKROLL<span class="highlight">EX</span></a>
+                    <a class="navbar-brand" href=""><img src="<?= URL; ?>public/images/logo.png"</a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#home" class="hover-effect">Home</a></li>
-                        <li><a href="#about" class="hover-effect">About</a></li>
-                        <li><a href="#team" class="hover-effect">Team</a></li>
-                        <li><a href="#services" class="hover-effect">Services</a></li>
-                        <li><a href="#work" class="hover-effect">Work</a></li>
-                        <li><a href="#process" class="hover-effect">Process</a></li>
-                        <li><a href="#skills" class="hover-effect">Skills</a></li>
-                        <li><a href="#contact" class="hover-effect">Contact</a></li>
+                        <?php foreach ($this->mostrarMenu as $menu): ?>
+                            <li><a href="#<?= $menu['id_menu']; ?>" class="hover-effect"><?= utf8_encode($menu['descripcion']); ?></a></li>
+                        <?php endforeach; ?>
                         <li class="hidden-xs"><a class="menu-toggle ext-nav-toggle" data-target=".ext-nav" href="#"><span></span></a></li>
                     </ul>
                 </div>
