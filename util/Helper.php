@@ -572,6 +572,11 @@ class Helper {
         return $output;
     }
 
+    public function getDatosTabla($tabla, $id, $campos = '*') {
+        $sql = $this->db->select("SELECT $campos FROM `$tabla` where id = $id;");
+        return $sql[0];
+    }
+
     /*     * ***************************
      * FUNCIONES DEL INHERENTES AL SISTEMA
      * ****************************** */
@@ -612,6 +617,54 @@ class Helper {
             'imagenes' => $sqlImagenes,
             'textos' => $sqlTextos,
             'contenido' => $sqlContenido[0]
+        );
+        return $data;
+    }
+
+    public function datosDirectores() {
+        $data = array();
+        $sqlImagenes = $this->db->select("select imagen from directores_imagenes WHERE estado =1 ORDER BY orden ASC;");
+        $sqlTitulo = $this->db->select("select titulo from directores WHERE id = 1;");
+        $sqlDirectores = $this->db->select("SELECT nombre, cargo, linkedin, imagen, email FROM `directores_personas` WHERE estado = 1 ORDER BY orden ASC;");
+        $data = array(
+            'imagenes' => $sqlImagenes,
+            'titulo' => utf8_encode($sqlTitulo[0]['titulo']),
+            'directores' => $sqlDirectores
+        );
+        return $data;
+    }
+
+    public function datosEquipo() {
+        $data = array();
+        $sqlTitulo = $this->db->select("SELECT titulo FROM `equipo` where id=1;");
+        $sqlEquipo = $this->db->select("SELECT nombre, cargo, email, imagen FROM `equipo_integrantes` where estado = 1 ORDER BY orden ASC;");
+        $data = array(
+            'titulo' => utf8_encode($sqlTitulo[0]['titulo']),
+            'integrantes' => $sqlEquipo
+        );
+        return $data;
+    }
+
+    public function datosValores() {
+        $data = array();
+        $sqlTitulo = $this->db->select("SELECT titulo FROM `valores` where id=1;");
+        $sqlValores = $this->db->select("SELECT descripcion FROM `valores_items` where estado = 1 ORDER BY orden ASC;");
+        $data = array(
+            'titulo' => utf8_encode($sqlTitulo[0]['titulo']),
+            'valores' => $sqlValores
+        );
+        return $data;
+    }
+
+    public function datosServicios() {
+        $data = array();
+        $sqlTitulo = $this->db->select("SELECT titulo FROM `servicios` where id=1;");
+        $sqlImagenes = $this->db->select("select imagen from servicios_imagenes WHERE estado =1 ORDER BY orden ASC;");
+        $sqlServicios = $this->db->select("SELECT titulo, contenido FROM `servicios_items` where estado = 1 ORDER BY orden ASC;");
+        $data = array(
+            'titulo' => utf8_encode($sqlTitulo[0]['titulo']),
+            'imagenes' => $sqlImagenes,
+            'servicios' => $sqlServicios
         );
         return $data;
     }

@@ -33,35 +33,25 @@
         <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
         <div class="content colors-e">
             <div class="container">
-                <h2>About</h2>
-                <p class="header-details"><span class="highlight">We Create</span> Awesome Stuff</p>
-                <p class="lead">We are <span class="highlight">Creative Team</span> located in Kalura, Bovlandia. Tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <h2><?= utf8_encode($this->quienesSomos['titulo']); ?></h2>
+                <?= utf8_encode($this->quienesSomos['contenido']); ?>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="col-icon">
-                            <i class="li_bulb"></i>
+                            <i class="<?= utf8_encode($this->quienesSomos['fontawesome_vision']); ?>" aria-hidden="true"></i>
                         </div>
                         <div class="col-content">
-                            <h4>Web <span class="highlight">Development</span></h4>
-                            <p>Praesent sodales, quam vitae gravida interdum, ex mi bibendum enim, sit amet tristique mi quam vel odio. Donec non nunc condimentum, hendrerit elit sed, condimentum magna. Suspendisse imperdiet purus vel ornare cursus.</p>
+                            <h4><span class="highlight"><?= utf8_encode($this->quienesSomos['titulo_vision']); ?></span></h4>
+                            <p><?= utf8_encode($this->quienesSomos['contenido_vision']); ?></p>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="col-icon">
-                            <i class="li_t-shirt"></i>
+                            <i class="<?= utf8_encode($this->quienesSomos['fontawesome_mision']); ?>" aria-hidden="true"></i>
                         </div>
                         <div class="col-content">
-                            <h4>Internet <span class="highlight">Marketing</span></h4>
-                            <p>Curabitur et diam elementum, mollis tortor a, malesuada turpis. Vivamus gravida, justo et molestie sollicitudin, erat lorem tempus eros, vel laoreet nibh urna ac nunc, vestibulum neque vitae pellentesque efficitur.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="col-icon">
-                            <i class="li_megaphone"></i>
-                        </div>
-                        <div class="col-content">
-                            <h4>Client <span class="highlight">Support</span></h4>
-                            <p>Sed porta erat vel ipsum maximus, eget maximus est maximus. Maecenas at venenatis nibh, sit amet suscipit odio. In feugiat vehicula dui. In felis enim, maximus a dolor semper efficitur elit euismod magna quis commodo.</p>
+                            <h4><span class="highlight"><?= utf8_encode($this->quienesSomos['titulo_mision']); ?></span></h4>
+                            <p><?= utf8_encode($this->quienesSomos['contenido_mision']); ?></p>
                         </div>
                     </div>
                 </div>
@@ -69,44 +59,30 @@
         </div>
     </div>
     <div class="view" id="how-we-work">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" />
+        <?php foreach ($this->datosDirectores['imagenes'] as $imagen): ?>
+            <img alt class="bg" src="<?= URL; ?>public/images/background-directores/<?= $imagen['imagen']; ?>" />
+        <?php endforeach; ?>
         <div class="content colors-h">
             <div class="container">
-                <h3><span class="highlight">How</span> We Work</h3>
-                <div class="row">
-                    <div class="col-md-6 col-md-offset-3">
-                        <p class="text-center">Aliquam fermentum massa ac est sollicitudin, at ultricies ligula tristique. Cras finibus, nulla ac convallis feugiat, nisl nisl lobortis est, eget auctor velit magna vel nunc. Donec nec eros rhoncus.</p>
-                    </div>
-                </div>
+                <h3><?= $this->datosDirectores['titulo']; ?></h3>
                 <div class="row icon-set">
-                    <div class="col-md-3 text-center">
-                        <p>
-                            <i class="li_eye circle scroll-in-animation background-20 heading" data-animation="fadeInUp"></i>
-                        </p>
-                        <p class="title"><span class="underline-text">Awesome</span></p>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <p>
-                            <i class="li_like circle scroll-in-animation background-20 heading" data-animation="fadeInUp"></i>
-                        </p>
-                        <p class="title"><span class="underline-text">Innovative</span></p>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <p>
-                            <i class="li_paperplane circle scroll-in-animation background-20 heading" data-animation="fadeInUp"></i>
-                        </p>
-                        <p class="title"><span class="underline-text">Creative</span></p>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <p>
-                            <i class="li_lab circle scroll-in-animation background-20 heading" data-animation="fadeInUp"></i>
-                        </p>
-                        <p class="title"><span class="underline-text">Experimental</span></p>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                    </div>
+                    <?php foreach ($this->datosDirectores['directores'] as $director): ?>
+                        <div class="col-md-4 text-center">
+                            <p>
+                                <i class="circle scroll-in-animation background-20 heading" data-animation="fadeInUp"><img class="img-responsive img-circle" src="<?= URL; ?>public/images/directores/<?= $director['imagen']; ?>" alt="<?= utf8_encode($director['nombre']); ?>"></i>
+                            </p>
+                            <p class="title"><span class="underline-text"><?= utf8_encode($director['nombre']); ?></span></p>
+                            <p><?= utf8_encode($director['cargo']); ?></p>
+                            <ul class="list-inline">
+                                <li>
+                                    <a href="<?= utf8_encode($director['linkedin']); ?>"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                                </li>
+                                <li>
+                                    <a href="mailto:<?= utf8_encode($director['email']); ?>"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
@@ -114,152 +90,43 @@
 </section>
 <section>
     <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" />
         <div class="content colors-e">
             <div class="container">
-                <h2>Team</h2>
-                <p class="header-details"><span class="highlight">Who </span>We Are</p>
-                <p class="lead">Our success depends on the <strong class="highlight">strength of our team.</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, nostrud exercitation.</p>
+                <h2 class="highlight-a"><?= $this->datosEquipo['titulo']; ?></h2>
                 <div class="row">
-                    <div class="col-md-3 col-sm-6  col-xs-6">
-                        <div class="hover-overlay">
-                            <img alt="Mike Johnson" src="<?= URL; ?>public/images/placeholders/380x573-1.jpg" title="Mike Johnson" class="fluid-width">
-                            <div class="overlay background-90-b">
-                                <div>
-                                    <p class="text-center text-uppercase heading-b">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                    </p>
-                                    <div class="separator-small"></div>
-                                    <p class="text-center">
-                                        <a target="_blank" href="https://www.facebook.com/"><i class="fa fa-facebook heading-b"></i></a>
-                                        <a target="_blank" href="http://www.youtube.com/"><i class="fa fa-youtube heading-b"></i></a>
-                                        <a target="_blank" href="https://github.com/"><i class="fa fa-github heading-b"></i></a>
-                                    </p>
+                    <?php foreach ($this->datosEquipo['integrantes'] as $equipo): ?>
+                        <div class="col-md-3 col-sm-6  col-xs-6">
+                            <div class="hover-overlay">
+                                <img alt="Mike Johnson" src="<?= URL; ?>public/images/equipo/<?= $equipo['imagen']; ?>" title="<?= utf8_encode($equipo['nombre']); ?>" class="fluid-width">
+                                <div class="overlay background-90-b">
+                                    <div>
+                                        <div class="separator-small"></div>
+                                        <p class="text-center">
+                                            <a target="_blank" href="mailto:<?= utf8_encode($equipo['email']); ?>"><i class="fa fa-envelope-o"></i></a>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="caption">
-                            <p>
-                                <span class="title">Mike Johnson</span>
-                                <br/>
-                                <span class="highlight">CEO &amp; Founder</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6  col-xs-6">
-                        <div class="hover-overlay">
-                            <img alt="Jessica Specter" src="<?= URL; ?>public/images/placeholders/380x573-1.jpg" title="Jessica Specter" class="fluid-width">
-                            <div class="overlay background-90-b">
-                                <div>
-                                    <p class="text-center text-uppercase heading-b">
-                                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                    </p>
-                                    <div class="separator-small"></div>
-                                    <p class="text-center">
-                                        <a target="_blank" href="https://twitter.com/"><i class="fa fa-twitter heading-b"></i></a>
-                                        <a target="_blank" href="https://www.linkedin.com/"><i class="fa fa-linkedin heading-b"></i></a>
-                                        <a target="_blank" href="https://plus.google.com/"><i class="fa fa-google-plus heading-b"></i></a>
-                                        <a target="_blank" href="https://vimeo.com/"><i class="fa fa-vimeo-square heading-b"></i></a>
-                                        <a target="_blank" href="https://www.tumblr.com/"><i class="fa fa-tumblr heading-b"></i></a>
-                                    </p>
-                                </div>
+                            <div class="caption">
+                                <p>
+                                    <span class="title"><?= utf8_encode($equipo['nombre']); ?></span>
+                                    <br/>
+                                    <span class="highlight"><?= utf8_encode($equipo['cargo']); ?></span>
+                                </p>
                             </div>
                         </div>
-                        <div class="caption">
-                            <p>
-                                <span class="title">Jessica Specter</span>
-                                <br/>
-                                <span class="highlight">Creative Director</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6  col-xs-6">
-                        <div class="hover-overlay">
-                            <img alt="Lynda Smith" src="<?= URL; ?>public/images/placeholders/380x573-1.jpg" title="Lynda Smith" class="fluid-width">
-                            <div class="overlay background-90-b">
-                                <div>
-                                    <p class="text-center text-uppercase heading-b">
-                                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                    </p>
-                                    <div class="separator-small"></div>
-                                    <p class="text-center">
-                                        <a target="_blank" href="https://www.flickr.com/"><i class="fa fa-flickr heading-b"></i></a>
-                                        <a target="_blank" href="https://www.dropbox.com/"><i class="fa fa-dropbox heading-b"></i></a>
-                                        <a target="_blank" href="https://www.xing.com/"><i class="fa fa-xing heading-b"></i></a>
-                                        <a target="_blank" href="http://vk.com/"><i class="fa fa-vk heading-b"></i></a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="caption">
-                            <p>
-                                <span class="title">Andrew Miles</span>
-                                <br/>
-                                <span class="highlight">Developer</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6  col-xs-6">
-                        <div class="hover-overlay">
-                            <img alt="Lynda Smith" src="<?= URL; ?>public/images/placeholders/380x573-1.jpg" title="Lynda Smith" class="fluid-width">
-                            <div class="overlay background-90-b">
-                                <div>
-                                    <p class="text-center text-uppercase heading-b">
-                                        Exercitation ut enim ad minim veniam, quis nostrud ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                    </p>
-                                    <div class="separator-small"></div>
-                                    <p class="text-center">
-                                        <a target="_blank" href="https://twitter.com/"><i class="fa fa-twitter heading-b"></i></a>
-                                        <a target="_blank" href="https://www.linkedin.com/"><i class="fa fa-linkedin heading-b"></i></a>
-                                        <a target="_blank" href="https://plus.google.com/"><i class="fa fa-google-plus heading-b"></i></a>
-                                        <a target="_blank" href="https://vimeo.com/"><i class="fa fa-vimeo-square heading-b"></i></a>
-                                        <a target="_blank" href="https://www.tumblr.com/"><i class="fa fa-tumblr heading-b"></i></a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="caption">
-                            <p>
-                                <span class="title">Lynda Smith</span>
-                                <br/>
-                                <span class="highlight">Programmer</span>
-                            </p>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <h3><span class="highlight">We want to change</span><br/>peoples lives</h3>
+                <h3><span class="highlight"><?= $this->datosValores['titulo']; ?></span></h3>
                 <div class="row">
                     <div class="col-md-6 col-md-offset-3">
-                        <p class="text-center">Aliquam fermentum massa ac est sollicitudin, at ultricies ligula tristique. Cras finibus, nulla ac convallis feugiat, nisl nisl lobortis est, eget auctor velit magna vel nunc. Donec nec eros rhoncus.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="view" id="who-we-are">
-        <div class="content pane">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6 stretch-height pane">
-                        <div class="view fluid-height">
-                            <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" />
-                            <div class="content incut colors-d background-transparent">
-                                <div class="position-middle-center text-center">
-                                    <a class="button background-lite-c heading-c" href="#work">View Our Work</a>
+                        <div class="skillbars">
+                            <?php foreach ($this->datosValores['valores'] as $item): ?>
+                                <div class="skillbar clearfix background-d" data-percent="50%">
+                                    <div class="skillbar-title background-b heading-b"><span><?= utf8_encode($item['descripcion']); ?></span></div>
+                                    <div class="skillbar-bar background-b"></div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6  stretch-height pane">
-                        <div class="view fluid-height">
-                            <div class="content incut colors-e background-solid">
-                                <div class="position-middle-center">
-                                    <h3 class="text-left"><span class="highlight">Who</span> We Are</h3>
-                                    <p class="subtitle highlight"><strong>Quisque dolor lacus, commodo id hendrerit viverra, euismod in odio.</strong></p>
-                                    <p>Aliquam fermentum massa ac est sollicitudin, at ultricies ligula tristique. Cras finibus, nulla ac convallis feugiat, nisl nisl lobortis est, eget auctor velit magna vel nunc. Donec nec eros rhoncus.</p>
-                                    <p>Aenean nisi neque, aliquam ut nibh sit amet, finibus sagittis tortor aenean consectetur.</p>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -269,101 +136,67 @@
 </section>
 <section id="<?= $this->mostrarMenu[2]['id_menu']; ?>">
     <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
+        <?php foreach ($this->datosServicios['imagenes'] as $imagen): ?>
+            <img alt class="bg" src="<?= URL; ?>public/images/background-servicios/<?= $imagen['imagen']; ?>" />
+        <?php endforeach; ?>
         <div class="content colors-e">
             <div class="container">
-                <h2>Services</h2>
-                <p class="header-details"><span class="highlight">We Are Here</span> For You</p>
-                <p class="lead">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2><?= $this->datosServicios['titulo']; ?></h2>
                 <div class="row">
-                    <div class="col-md-3 top-line">
-                        <h4>Web<br />Design</h4>
-                        <p class="highlight">Duis ipsum dolor sit amet incididunt ut labore et dolore magna.</p>
-                        <p>Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.</p>
-                        <ul class="simple">
-                            <li>Responsive design</li>
-                            <li>Template development</li>
-                            <li>Rich media banners</li>
-                            <li>Frontend development</li>
-                            <li>Backend development</li>
-                            <li>Content creation</li>
-                            <li>Content audit</li>
-                            <li>Copywriting</li>
-                            <li>Photography</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3 top-line">
-                        <h4>Internet<br />Marketing</h4>
-                        <p class="highlight">Excepteur ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.</p>
-                        <p>Excepteur sint occaecat elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.</p>
-                        <ul class="simple">
-                            <li>Facebook advertising</li>
-                            <li>SEO and SEM</li>
-                            <li>Facebook apps</li>
-                            <li>Context advertising</li>
-                            <li>Rich media banners</li>
-                            <li>Game development</li>
-                            <li>Content creation</li>
-                            <li>Testing</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3 top-line">
-                        <h4>Digital<br />production</h4>
-                        <p class="highlight">Lorem ipsum dolor sit amet, consectetur adipisicing elit eiusmod consequat.</p>
-                        <p>Duis aute irure elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat. Exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                        <ul class="simple">
-                            <li>Rich media banners</li>
-                            <li>Audio production</li>
-                            <li>Photography</li>
-                            <li>Design</li>
-                            <li>Content creation</li>
-                            <li>Content audit</li>
-                            <li>Project management</li>
-                            <li>Technical requirements</li>
-                            <li>Testing</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3 top-line">
-                        <h4>Application<br />Development</h4>
-                        <p class="highlight">Commodo ipsum dolor sit amet dolore magna aliqua.</p>
-                        <p>Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.</p>
-                        <ul class="simple">
-                            <li>Facebook apps</li>
-                            <li>Brand immersion &amp; research</li>
-                            <li>Competitive analysis</li>
-                            <li>Stakeholder interviews</li>
-                            <li>Content audit</li>
-                            <li>Project/platform planning</li>
-                            <li>Technical requirements</li>
-                            <li>Testing</li>
-                        </ul>
-                    </div>
+                    <?php foreach ($this->datosServicios['servicios'] as $servicios): ?>
+                        <div class="col-md-3 top-line">
+                            <h4><?= utf8_encode($servicios['titulo']); ?></h4>
+                            <?= utf8_encode($servicios['contenido']); ?>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
     </div>
+</section>
+<section id="<?= $this->mostrarMenu[3]['id_menu']; ?>">
     <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
-        <div class="content half-size colors-h">
+        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" />
+        <div class="content colors-e">
             <div class="container">
-                <div class="show-list slogan">
-                    <div class="show-item">We Are Designers</div>
-                    <div class="show-item">We Are Programmers</div>
-                    <div class="show-item">We Are Coders</div>
-                    <div class="show-item">We Are Developers</div>
-                    <div class="show-item">We Are Creative</div>
+                <h2>Our <span class="highlight">Process</span></h2>
+                <p class="header-details"><span class="highlight">We Make</span> Our Customers Happy</p>
+                <p class="lead">Curabitur eget nulla ut neque aliquam dictum. Nam sollicitudin leo dui, non malesuada felis aliquam non. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Phasellus finibus tempor neque vel scelerisque. Cras nec ex ut eleifend mollis ut a nibh. Vivamus commodo est sit amet ultricies.</p>
+                <div class="process">
+                    <div class="row process-row">
+                        <div class="col-md-3 process-step">
+                            <div class="process-box"><i class="li_search heading"></i></div>
+                            <p class="title">Research</p>
+                            <p class="text-center">Vestibulum placerat, ipsum vel mollis ornare, libero ex dapibus diam, gravida tempor.</p>
+                        </div>
+                        <div class="col-md-3 process-step">
+                            <div class="process-box"><i class="li_pen heading"></i></div>
+                            <p class="title">Concept</p>
+                            <p class="text-center">Vestibulum vel dictum dolor, eget luctus risus. Nullam scelerisque viverra nisl et vehicula, in ut tellus.</p>
+                        </div>
+                        <div class="col-md-3 process-step">
+                            <div class="process-box"><i class="li_settings heading"></i></div>
+                            <p class="title">Develop</p>
+                            <p class="text-center">Mauris venenatis vulputate ligula eu finibus. Donec pretium libero lacus, vitae maximus purus dapibus.</p>
+                        </div>
+                        <div class="col-md-3 process-step">
+                            <div class="process-box"><i class="li_paperplane heading"></i></div>
+                            <p class="title">Test</p>
+                            <p class="text-center">Proin gravida, est sed vestibulum cursus, enim libero sollicitudin lacus, vel ornare nunc.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="separator"></div>
-                <p class="text-center big-font">
-                    <em>— Lorem ipsum dolor sit amet —</em>
-                </p>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <p class="text-center">Aliquam fermentum massa ac est sollicitudin, at ultricies ligula tristique. Cras finibus, nulla ac convallis feugiat, nisl nisl lobortis est, eget auctor velit magna vel nunc. Donec nec eros rhoncus.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 <section id="<?= $this->mostrarMenu[4]['id_menu']; ?>">
     <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" />
         <div class="content no-bottom-padding colors-e">
             <div class="container">
                 <h2>Our <span class="highlight">Work</span></h2>
@@ -534,77 +367,7 @@
         </div>
     </div>
 </section>
-<section id="process">
-    <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" />
-        <div class="content colors-e">
-            <div class="container">
-                <h2>Our <span class="highlight">Process</span></h2>
-                <p class="header-details"><span class="highlight">We Make</span> Our Customers Happy</p>
-                <p class="lead">Curabitur eget nulla ut neque aliquam dictum. Nam sollicitudin leo dui, non malesuada felis aliquam non. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Phasellus finibus tempor neque vel scelerisque. Cras nec ex ut eleifend mollis ut a nibh. Vivamus commodo est sit amet ultricies.</p>
-                <div class="process">
-                    <div class="row process-row">
-                        <div class="col-md-3 process-step">
-                            <div class="process-box"><i class="li_search heading"></i></div>
-                            <p class="title">Research</p>
-                            <p class="text-center">Vestibulum placerat, ipsum vel mollis ornare, libero ex dapibus diam, gravida tempor.</p>
-                        </div>
-                        <div class="col-md-3 process-step">
-                            <div class="process-box"><i class="li_pen heading"></i></div>
-                            <p class="title">Concept</p>
-                            <p class="text-center">Vestibulum vel dictum dolor, eget luctus risus. Nullam scelerisque viverra nisl et vehicula, in ut tellus.</p>
-                        </div>
-                        <div class="col-md-3 process-step">
-                            <div class="process-box"><i class="li_settings heading"></i></div>
-                            <p class="title">Develop</p>
-                            <p class="text-center">Mauris venenatis vulputate ligula eu finibus. Donec pretium libero lacus, vitae maximus purus dapibus.</p>
-                        </div>
-                        <div class="col-md-3 process-step">
-                            <div class="process-box"><i class="li_paperplane heading"></i></div>
-                            <p class="title">Test</p>
-                            <p class="text-center">Proin gravida, est sed vestibulum cursus, enim libero sollicitudin lacus, vel ornare nunc.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 col-md-offset-3">
-                        <p class="text-center">Aliquam fermentum massa ac est sollicitudin, at ultricies ligula tristique. Cras finibus, nulla ac convallis feugiat, nisl nisl lobortis est, eget auctor velit magna vel nunc. Donec nec eros rhoncus.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="view" id="numbers">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
-        <div class="content half-size colors-h">
-            <div class="container-fluid">
-                <h3>Our <span class="highlight">Numbers</span></h3>
-                <p class="title"><span class="highlight">Some of the</span> cool facts about us</p>
-                <div class="row counters">
-                    <div class="col-md-3 counter background-25-b">
-                        <div class="count player row heading background-10-light">210</div>
-                        <div class="caption">Projects</div>
-                    </div>
-                    <div class="col-md-3 counter background-35-h">
-                        <div class="count player row heading background-10-light">120</div>
-                        <div class="caption">Clients</div>
-                    </div>
-                    <div class="col-md-3 counter background-25-b">
-                        <div class="count player row heading background-10-light">3459</div>
-                        <div class="caption">Followers</div>
-                    </div>
-                    <div class="col-md-3 counter background-35-h">
-                        <div class="count player row heading background-10-light">7</div>
-                        <div class="caption">Years</div>
-                    </div>
-                </div>
-            </div>
-            <div class="container">
-                <p class="text-center ">Donec vulputate sit amet dolor vel pharetra donec pharetra.</p>
-            </div>
-        </div>
-    </div>
-</section>
+
 <section id="skills">
     <div class="view">
         <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-2.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" />
