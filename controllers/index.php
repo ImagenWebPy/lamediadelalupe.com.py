@@ -18,6 +18,10 @@ class Index extends Controller {
         $this->view->datosEquipo = $this->helper->datosEquipo();
         $this->view->datosValores = $this->helper->datosValores();
         $this->view->datosServicios = $this->helper->datosServicios();
+        $this->view->datosHerramientas = $this->helper->datosHerramientas();
+        $this->view->datosClientes = $this->helper->datosClientes();
+        $this->view->datosMultimedia = $this->helper->datosMultimedia();
+        $this->view->datosContacto = $this->helper->getDatosContacto();
         #fin parametros
         #cargamos la vista
         $this->view->render('header');

@@ -669,4 +669,52 @@ class Helper {
         return $data;
     }
 
+    public function datosHerramientas() {
+        $data = array();
+        $sqlTitulo = $this->db->select("SELECT titulo FROM `herramientas` where id=1;");
+        $sqlImagenes = $this->db->select("select imagen from herramientas_imagenes WHERE estado =1 ORDER BY orden ASC;");
+        $sqlHerramientas = $this->db->select("SELECT imagen, titulo, contenido from herramientas_items where estado = 1 ORDER BY orden ASC;");
+        $data = array(
+            'titulo' => utf8_encode($sqlTitulo[0]['titulo']),
+            'imagenes' => $sqlImagenes,
+            'herramientas' => $sqlHerramientas
+        );
+        return $data;
+    }
+
+    public function datosClientes() {
+        $data = array();
+        $sqlTitulo = $this->db->select("SELECT titulo FROM `clientes` where id=1;");
+        $sqlTipo = $this->db->select("SELECT DISTINCT(tipo) as tipo FROM clientes_items");
+        $sqlClientes = $this->db->select("SELECT id, nombre, imagen, url, tipo FROM `clientes_items` where estado = 1 ORDER BY orden ASC;");
+        $data = array(
+            'titulo' => utf8_encode($sqlTitulo[0]['titulo']),
+            'tipos' => $sqlTipo,
+            'clientes' => $sqlClientes
+        );
+        return $data;
+    }
+
+    public function datosMultimedia() {
+        $data = array();
+        $sqlTitulo = $this->db->select("SELECT titulo FROM `multimedia` where id=1;");
+        $sqlMultimedia = $this->db->select("SELECT * FROM `multimedia_items` where estado = 1 ORDER BY fecha DESC;");
+        $data = array(
+            'titulo' => utf8_encode($sqlTitulo[0]['titulo']),
+            'multimedia' => $sqlMultimedia
+        );
+        return $data;
+    }
+
+    public function getDatosContacto() {
+        $data = array();
+        $sqlTitulo = $this->db->select("SELECT * FROM `datos_contacto` where id=1;");
+        $sqlImagenes = $this->db->select("select imagen from contacto_imagenes WHERE estado =1 ORDER BY orden ASC;");
+        $data = array(
+            'datos' => $sqlTitulo[0],
+            'imagenes' => $sqlImagenes
+        );
+        return $data;
+    }
+
 }

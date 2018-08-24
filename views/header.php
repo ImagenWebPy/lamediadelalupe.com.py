@@ -87,7 +87,7 @@
                 <div class="navbar-header">
                     <a class="menu-toggle ext-nav-toggle visible-xs-block" data-target=".ext-nav" href="#"><span></span></a>
                     <a class="menu-toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" href="#"><span></span></a>
-                    <a class="navbar-brand" href=""><img src="<?= URL; ?>public/images/logo.png"</a>
+                    <a class="navbar-brand" href="<?= URL; ?>"><img src="<?= URL; ?>public/images/logo.png"></a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -119,9 +119,8 @@
                 <a class="cross" href="#"></a>
             </div>
             <div class="overlay-view">
-                <div class="map-canvas" data-latitude="42.487606" data-longitude="-71.115661" data-zoom="14">
-                    <div class="map-marker" data-latitude="42.487606" data-longitude="-71.115661" data-text="Our awesome location"></div>
-                    <div class="map-marker" data-latitude="42.485100" data-longitude="-71.113256" data-text="Our sales office"></div>
+                <div class="map-canvas" data-latitude="<?= utf8_encode($this->datosContacto['datos']['latitud']); ?>" data-longitude="<?= utf8_encode($this->datosContacto['datos']['longitud']); ?>" data-zoom="<?= utf8_encode($this->datosContacto['datos']['zoom']); ?>">
+                    <div class="map-marker" data-latitude="<?= utf8_encode($this->datosContacto['datos']['latitud']); ?>" data-longitude="<?= utf8_encode($this->datosContacto['datos']['longitud']); ?>" data-text="<?= utf8_encode($this->datosContacto['datos']['texto_marcador']); ?>"></div>
                 </div>
             </div>
         </div>
