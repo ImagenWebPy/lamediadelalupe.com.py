@@ -19,7 +19,7 @@
                         <p class="text-right title">
                             <?= utf8_encode($this->datosInicio['contenido']['contenido']); ?>
                         </p>
-                        <p class="text-right"><a href="#<?= $this->mostrarMenu[1]['id_menu']; ?>" class="button background-60-d heading-d"><?= utf8_encode($this->mostrarMenu[1]['descripcion']); ?></a><a href="#work" class="button background-60-f heading-f">Our Work</a></p>
+                        <p class="text-right"><a href="#<?= $this->mostrarMenu[1]['id_menu']; ?>" class="button background-60-d heading-d"><?= utf8_encode($this->mostrarMenu[1]['descripcion']); ?></a><a href="#<?= $this->mostrarMenu[4]['id_menu']; ?>" class="button background-60-f heading-f"><?= utf8_encode($this->mostrarMenu[4]['descripcion']); ?></a></p>
                     </div>
                 </div>
             </div>
@@ -144,7 +144,7 @@
                 <h2><?= $this->datosServicios['titulo']; ?></h2>
                 <div class="row">
                     <?php foreach ($this->datosServicios['servicios'] as $servicios): ?>
-                        <div class="col-md-3 top-line" style="height: 600px; overflow-y: scroll; overflow-x: no-display;">
+                        <div class="col-md-3 top-line" style="height: 600px;">
                             <h4><?= utf8_encode($servicios['titulo']); ?></h4>
                             <?= utf8_encode($servicios['contenido']); ?>
                         </div>

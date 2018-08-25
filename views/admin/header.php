@@ -66,21 +66,11 @@ $rol = $_SESSION['usuarioLogueado']['rol'];
                         <li><a href="<?= URL; ?>admin"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboards</span></a></li>
                         <?php if (($rol == 'Administrador') || ($rol == 'Editor')): ?>
                             <li><a href="<?= URL; ?>admin/inicio"><i class="fa fa-home"></i> <span class="nav-label">Inicio</span></a></li>
-                            <li><a href="<?= URL; ?>admin/pantallas_led"><i class="fa fa-television"></i> <span class="nav-label">Pantallas Led</span></a></li>
-                            <li>
-                                <a href="#"><i class="fa fa-picture-o"></i> <span class="nav-label">Carteles Tradicionales</span><span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level collapse" style="height: 0px;">
-                                    <li><a href="<?= URL; ?>admin/asuncion">Asunción</a></li>
-                                    <li><a href="<?= URL; ?>admin/gran_asuncion">Gran Asunción</a></li>
-                                    <li><a href="<?= URL; ?>admin/ruteros">Ruteros</a></li>
-                                    <li><a href="<?= URL; ?>admin/urbanos">Urbanos</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="<?= URL; ?>admin/iconicos"><i class="fa fa-star"></i> <span class="nav-label">Icónicos</span></a></li>
-                            <li><a href="<?= URL; ?>admin/buses"><i class="fa fa-bus"></i> <span class="nav-label">Buses</span></a></li>
-                            <li><a href="<?= URL; ?>admin/cobertura"><i class="fa fa-map-o"></i> <span class="nav-label">Cobertura</span></a></li>
-                            <li><a href="<?= URL; ?>admin/metricas"><i class="fa fa-line-chart"></i> <span class="nav-label">Metricas</span></a></li>
-                            <li><a href="<?= URL; ?>admin/empresa"><i class="fa fa-building"></i> <span class="nav-label">Empresa</span></a></li>
+                            <li><a href="<?= URL; ?>admin/quienes_somos"><i class="fa fa-television"></i> <span class="nav-label">Quienes Somos</span></a></li>
+                            <li><a href="<?= URL; ?>admin/servicios"><i class="fa fa-star"></i> <span class="nav-label">Servicios</span></a></li>
+                            <li><a href="<?= URL; ?>admin/herramientas"><i class="fa fa-bus"></i> <span class="nav-label">Herramientas</span></a></li>
+                            <li><a href="<?= URL; ?>admin/nuestros_clientes"><i class="fa fa-map-o"></i> <span class="nav-label">Nuestros Clientes</span></a></li>
+                            <li><a href="<?= URL; ?>admin/noticias"><i class="fa fa-line-chart"></i> <span class="nav-label">Noticias</span></a></li>
                             <li><a href="<?= URL; ?>admin/contacto"><i class="fa fa-envelope-o"></i> <span class="nav-label">Contacto</span></a></li>
                             <li><a href="<?= URL; ?>admin/equipo"><i class="fa fa-users"></i> <span class="nav-label">Equipo</span></a></li>
                             <li><a href="<?= URL; ?>admin/menu"><i class="fa fa-bars"></i> <span class="nav-label">Menú</span></a></li>

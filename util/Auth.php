@@ -7,7 +7,7 @@ class Auth {
 
     public static function handleLogin($url = NULL) {
         @session_start();
-        $logged = (!empty($_SESSION['loggedIn']) ? $_SESSION['loggedIn'] : '');
+        $logged = (!empty($_SESSION['loggedInLaMedia']) ? $_SESSION['loggedInLaMedia'] : '');
         if (empty($logged)) {
             //session_destroy();
             if (!isset($_SESSION['urlAnterior'])) {
