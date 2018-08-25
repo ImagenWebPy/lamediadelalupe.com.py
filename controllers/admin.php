@@ -32,9 +32,31 @@ class Admin extends Controller {
             unset($_SESSION['message']);
     }
 
+    public function quienes_somos() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Quienes Somos';
+
+        $this->view->datosContenido = $this->model->datosContenido('quienes_somos');
+
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/quienes_somos/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
+
     public function listadoDTSlider() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTSlider();
+        echo $data;
+    }
+
+    public function listadoDTQuienesSomos() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTQuienesSomos();
         echo $data;
     }
 
@@ -60,6 +82,15 @@ class Admin extends Controller {
         echo $datos;
     }
 
+    public function modalEditarDTQuienesSomos() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTQuienesSomos($data);
+        echo $datos;
+    }
+
     public function frmEditarSlider() {
         header('Content-type: application/json; charset=utf-8');
         $datos = array(
@@ -68,6 +99,17 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarSlider($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarQuienesSomos() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarQuienesSomos($datos);
         echo json_encode($data);
     }
 
@@ -106,6 +148,41 @@ class Admin extends Controller {
         }
     }
 
+    public function uploadImgQuienesSomos() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkImagen('imagen', 'quienes_somos_imagenes', $idPost, 'background-quienes_somos');
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/background-quienes_somos/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            #REDIMENSIONAR
+            $imagen = $serverdir . $filename;
+            $imagen_final = $filename;
+            $ancho = 1920;
+            $alto = 1200;
+            $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+            #############
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgQuienesSomos($data);
+            echo json_encode($response);
+        }
+    }
+
     public function frmEditarIndexSeccion1() {
         header('Content-type: application/json; charset=utf-8');
         $data = array(
@@ -113,6 +190,22 @@ class Admin extends Controller {
             'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL
         );
         $datos = $this->model->frmEditarIndexSeccion1($data);
+        echo json_encode($datos);
+    }
+
+    public function frmEditarContenidoQuienesSomos() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+            'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL,
+            'contenido_mision' => (!empty($_POST['contenido_mision'])) ? $_POST['contenido_mision'] : NULL,
+            'contenido_vision' => (!empty($_POST['contenido_vision'])) ? $_POST['contenido_vision'] : NULL,
+            'titulo_vision' => (!empty($_POST['titulo_vision'])) ? $_POST['titulo_vision'] : NULL,
+            'titulo_mision' => (!empty($_POST['titulo_mision'])) ? $_POST['titulo_mision'] : NULL,
+            'fontawesome_vision' => (!empty($_POST['fontawesome_vision'])) ? $_POST['fontawesome_vision'] : NULL,
+            'fontawesome_mision' => (!empty($_POST['fontawesome_mision'])) ? $_POST['fontawesome_mision'] : NULL
+        );
+        $datos = $this->model->frmEditarContenidoQuienesSomos($data);
         echo json_encode($datos);
     }
 

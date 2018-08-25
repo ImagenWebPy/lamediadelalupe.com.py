@@ -14,6 +14,7 @@ class Index extends Controller {
         $this->view->mostrarRedes = $this->helper->mostrarRedes();
         $this->view->datosInicio = $this->helper->datosInicio();
         $this->view->quienesSomos = $this->helper->getDatosTabla('quienes_somos', 1);
+        $this->view->quienesSomosImagenes = $this->helper->quienesSomosImagenes();
         $this->view->datosDirectores = $this->helper->datosDirectores();
         $this->view->datosEquipo = $this->helper->datosEquipo();
         $this->view->datosValores = $this->helper->datosValores();

@@ -30,7 +30,9 @@
     <div class="view">
     </div>
     <div class="view">
-        <img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-0.jpg" /><img alt class="bg" src="<?= URL; ?>public/images/placeholders/1920x1200-1.jpg" />
+        <?php foreach ($this->quienesSomosImagenes as $imagenes): ?>
+            <img alt class="bg" src="<?= URL; ?>public/images/background-quienes_somos/<?= $imagenes['imagen']; ?>" />
+        <?php endforeach; ?>
         <div class="content colors-e">
             <div class="container">
                 <h2><?= utf8_encode($this->quienesSomos['titulo']); ?></h2>

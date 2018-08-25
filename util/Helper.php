@@ -669,6 +669,11 @@ class Helper {
         return $data;
     }
 
+    public function quienesSomosImagenes() {
+        $sqlImagenes = $this->db->select("select imagen from quienes_somos_imagenes WHERE estado = 1 ORDER BY orden ASC;");
+        return $sqlImagenes;
+    }
+
     public function datosHerramientas() {
         $data = array();
         $sqlTitulo = $this->db->select("SELECT titulo FROM `herramientas` where id=1;");

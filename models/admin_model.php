@@ -65,6 +65,23 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'quienes_somos':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="quienes_somos" data-rowid="quienesSomos_" data-tabla="quienes_somos_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="quienes_somos" data-rowid="quienesSomos_" data-tabla="quienes_somos_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTQuienesSomos"><i class="fa fa-edit"></i> Editar </a>';
+                if (!empty($sql[0]['imagen'])) {
+                    $img = '<img src="' . URL . 'public/images/background-quienes_somos/' . $sql[0]['imagen'] . '" style="width: 160px;">';
+                } else {
+                    $img = '-';
+                }
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . $img . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'redes':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="redes" data-rowid="redes_" data-tabla="redes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -113,6 +130,34 @@ class Admin_Model extends Model {
             }
             array_push($datos, array(
                 "DT_RowId" => "slider_$id",
+                'orden' => $item['orden'],
+                'imagen' => $img,
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTQuienesSomos() {
+        $sql = $this->db->select("SELECT * FROM quienes_somos_imagenes ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="quienes_somos" data-rowid="quienesSomos_" data-tabla="quienes_somos_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="quienes_somos" data-rowid="quienesSomos_" data-tabla="quienes_somos_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTQuienesSomos"><i class="fa fa-edit"></i> Editar </a>';
+            if (!empty($item['imagen'])) {
+                $img = '<img src="' . URL . 'public/images/background-quienes_somos/' . $item['imagen'] . '" style="width: 160px;">';
+            } else {
+                $img = '-';
+            }
+            array_push($datos, array(
+                "DT_RowId" => "quienesSomos_$id",
                 'orden' => $item['orden'],
                 'imagen' => $img,
                 'estado' => $estado,
@@ -197,6 +242,80 @@ class Admin_Model extends Model {
         return json_encode($data);
     }
 
+    public function modalEditarDTQuienesSomos($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from quienes_somos_imagenes where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagen de Fondo</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarQuienesSomos" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 1920 x 1200px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileQuienesSomos" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgQuienesSomos" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileQuienesSomos").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgQuienesSomos" + response.id).html(response.content);
+                                        $("#quienesSomos_" + response.id).html(response.row);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgQuienesSomos' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/background-quienes_somos/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar Imagen de Fondo - Quienes Somos',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
     public function frmEditarSlider($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -217,6 +336,26 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarQuienesSomos($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('quienes_somos_imagenes', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('quienes_somos', 'quienes_somos_imagenes', $id),
+            'message' => 'Se ha actualizado el contenido de la imagen'
+        );
+        return $data;
+    }
+
     public function uploadImgSlider($datos) {
         $id = $datos['id'];
         $update = array(
@@ -233,12 +372,38 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function uploadImgQuienesSomos($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('quienes_somos_imagenes', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/background-quienes_somos/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('quienes_somos', 'quienes_somos_imagenes', $id)
+        );
+        return $data;
+    }
+
     public function unlinkImagenSlider($id) {
         $sql = $this->db->select("select imagen from inicio_imagenes where id = $id");
         $dir = 'public/images/inicio/';
         if (!empty($sql)) {
             if (file_exists($dir . $sql[0]['imagen'])) {
                 unlink($dir . $sql[0]['imagen']);
+            }
+        }
+    }
+
+    public function unlinkImagen($campo, $tabla, $id, $carpeta) {
+        $sql = $this->db->select("select $campo from $tabla where id = $id");
+        $dir = 'public/images/$carpeta/';
+        if (!empty($sql)) {
+            if (file_exists($dir . $sql[0][$campo])) {
+                unlink($dir . $sql[0][$campo]);
             }
         }
     }
@@ -250,10 +415,6 @@ class Admin_Model extends Model {
 
     public function frmEditarIndexSeccion1($datos) {
         $id = 1;
-        $estado = 1;
-        if (empty($datos['estado'])) {
-            $estado = 0;
-        }
         $update = array(
             'titulo' => utf8_decode($datos['titulo']),
             'contenido' => utf8_decode($datos['contenido'])
@@ -262,6 +423,26 @@ class Admin_Model extends Model {
         $data = array(
             'type' => 'success',
             'mensaje' => 'Se han actualizado los textos del inicio.'
+        );
+        return $data;
+    }
+
+    public function frmEditarContenidoQuienesSomos($datos) {
+        $id = 1;
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+            'contenido' => utf8_decode($datos['contenido']),
+            'contenido_mision' => utf8_decode($datos['contenido_mision']),
+            'contenido_vision' => utf8_decode($datos['contenido_vision']),
+            'titulo_vision' => utf8_decode($datos['titulo_vision']),
+            'titulo_mision' => utf8_decode($datos['titulo_mision']),
+            'fontawesome_vision' => utf8_decode($datos['fontawesome_vision']),
+            'fontawesome_mision' => utf8_decode($datos['fontawesome_mision'])
+        );
+        $this->db->update('quienes_somos', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'mensaje' => 'Se han actualizado los contenidos.'
         );
         return $data;
     }
@@ -337,6 +518,11 @@ class Admin_Model extends Model {
             'imagen' => $imagenes['imagenes']
         );
         $this->db->update('inicio_imagenes', $update, "id = $id");
+    }
+
+    public function datosContenido($tabla) {
+        $sql = $this->db->select("select * from $tabla where id = 1");
+        return $sql[0];
     }
 
 }
