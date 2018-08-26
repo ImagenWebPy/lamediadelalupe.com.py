@@ -107,6 +107,18 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'herramienta':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramienta" data-rowid="herramienta_" data-tabla="herramientas_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramienta" data-rowid="herramienta_" data-tabla="herramientas_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTHerramienta"><i class="fa fa-edit"></i> Editar </a>';
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['titulo']) . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'servicios':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios" data-rowid="servicios_" data-tabla="servicios_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -140,6 +152,23 @@ class Admin_Model extends Model {
                 $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTQuienesSomos"><i class="fa fa-edit"></i> Editar </a>';
                 if (!empty($sql[0]['imagen'])) {
                     $img = '<img src="' . URL . 'public/images/background-quienes_somos/' . $sql[0]['imagen'] . '" style="width: 160px;">';
+                } else {
+                    $img = '-';
+                }
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . $img . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
+            case 'herramientas_img':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramientas_img" data-rowid="herramientasImg_" data-tabla="herramientas_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramientas_img" data-rowid="herramientasImg_" data-tabla="herramientas_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTHerramientasImg"><i class="fa fa-edit"></i> Editar </a>';
+                if (!empty($sql[0]['imagen'])) {
+                    $img = '<img src="' . URL . 'public/images/background-herramientas/' . $sql[0]['imagen'] . '" style="width: 160px;">';
                 } else {
                     $img = '-';
                 }
@@ -251,6 +280,34 @@ class Admin_Model extends Model {
         return $json;
     }
 
+    public function listadoDTHerramientasImg() {
+        $sql = $this->db->select("SELECT * FROM herramientas_imagenes ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramientas_img" data-rowid="herramientasImg_" data-tabla="herramientas_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramientas_img" data-rowid="herramientasImg_" data-tabla="herramientas_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTHerramientasImg"><i class="fa fa-edit"></i> Editar </a>';
+            if (!empty($item['imagen'])) {
+                $img = '<img src="' . URL . 'public/images/background-herramientas/' . $item['imagen'] . '" style="width: 160px;">';
+            } else {
+                $img = '-';
+            }
+            array_push($datos, array(
+                "DT_RowId" => "herramientasImg_$id",
+                'orden' => $item['orden'],
+                'imagen' => $img,
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
     public function listadoDTServiciosImg() {
         $sql = $this->db->select("SELECT * FROM servicios_imagenes ORDER BY orden ASC;");
         $datos = array();
@@ -347,6 +404,29 @@ class Admin_Model extends Model {
                 'orden' => $item['orden'],
                 'nombre' => utf8_encode($item['nombre']),
                 'cargo' => utf8_encode($item['cargo']),
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTHerramientas() {
+        $sql = $this->db->select("SELECT * FROM herramientas_items ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramienta" data-rowid="herramienta_" data-tabla="herramientas_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramienta" data-rowid="herramienta_" data-tabla="herramientas_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTHerramienta"><i class="fa fa-edit"></i> Editar </a>';
+            array_push($datos, array(
+                "DT_RowId" => "herramienta_$id",
+                'orden' => $item['orden'],
+                'titulo' => utf8_encode($item['titulo']),
                 'estado' => $estado,
                 'editar' => $btnEditar
             ));
@@ -544,6 +624,80 @@ class Admin_Model extends Model {
                 </script>';
         $data = array(
             'titulo' => 'Editar Imagen de Fondo - Quienes Somos',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
+    public function modalEditarDTHerramientasImg($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from herramientas_imagenes where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagen de Fondo</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarHerramientasImg" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 1920 x 1200px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileHierramientasImg" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgHerramientasImg" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileHierramientasImg").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgHerramientasImg" + response.id).html(response.content);
+                                        $("#herramientasImg_" + response.id).html(response.row);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgHerramientasImg' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/background-herramientas/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar Imagen de Fondo - Herramientas',
             'content' => $modal
         );
         return json_encode($data);
@@ -891,6 +1045,96 @@ class Admin_Model extends Model {
         return json_encode($data);
     }
 
+    public function modalEditarDTHerramienta($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from herramientas_items where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagenes</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarHerramienta" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Titulo</label>
+                                        <input type="text" name="titulo" class="form-control" placeholder="Titulo" value="' . utf8_encode($sql[0]['titulo']) . '">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="contenido" class="summernote">' . utf8_encode($sql[0]['contenido']) . '</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 150 x 150px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileHerramienta" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgHerramienta" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileHerramienta").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgHerramienta" + response.id).html(response.content);
+                                        $("#herramienta_" + response.id).html(response.row);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgHerramienta' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/herramientas/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar datos Equipo',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
     public function modalEditarDTServicios($datos) {
         $id = $datos['id'];
         $sql = $this->db->select("select * from servicios_items where id = $id");
@@ -1045,6 +1289,26 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarHerramientasImg($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('herramientas_imagenes', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('herramientas_img', 'herramientas_imagenes', $id),
+            'message' => 'Se ha actualizado el contenido de la imagen'
+        );
+        return $data;
+    }
+
     public function frmEditarServiciosImg($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -1132,6 +1396,28 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarHerramienta($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+            'contenido' => utf8_decode($datos['contenido']),
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('herramientas_items', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('herramienta', 'herramientas_items', $id),
+            'message' => 'Se ha actualizado el contenido de la herramienta "' . $datos['titulo'] . '"'
+        );
+        return $data;
+    }
+
     public function frmEditarServicios($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -1207,6 +1493,22 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function uploadImgHerramientasImg($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('herramientas_imagenes', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/background-herramientas/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('herramientas_img', 'herramientas_imagenes', $id)
+        );
+        return $data;
+    }
+
     public function uploadImgServicios($datos) {
         $id = $datos['id'];
         $update = array(
@@ -1267,6 +1569,22 @@ class Admin_Model extends Model {
             'id' => $id,
             'content' => $contenido,
             'row' => $this->rowDataTable('equipo', 'equipo_integrantes', $id)
+        );
+        return $data;
+    }
+
+    public function uploadImgHerramienta($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('herramientas_items', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/herramientas/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('herramienta', 'herramientas_items', $id)
         );
         return $data;
     }
@@ -1346,6 +1664,19 @@ class Admin_Model extends Model {
         $data = array(
             'type' => 'success',
             'mensaje' => 'Se han actualizado el contenido de Directores.'
+        );
+        return $data;
+    }
+
+    public function frmEditarContenidoHerramientas($datos) {
+        $id = 1;
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+        );
+        $this->db->update('herramientas', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'message' => 'Se han actualizado el contenido de Herramientas.'
         );
         return $data;
     }
@@ -1479,6 +1810,62 @@ class Admin_Model extends Model {
                                     </div>
                                     <script>
                                         $(".html5fileupload.fileAgregarQuienesSomos").html5fileupload();
+                                    </script>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary btn-lg">Agregar Imagen</button>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar Imagen',
+            'content' => $modal
+        );
+        return $data;
+    }
+
+    public function modalAgregarHerramientasImg() {
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Imagen</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" action="' . URL . '/admin/frmAgregarHerramientasImg" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Imagen</h3>
+                                    <div class="alert alert-info alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        Detalles de la imagen a subir:<br>
+                                        -Formato: JPG,PNG<br>
+                                        -Dimensión: Imagen Normal: 1920 x 1200<br>
+                                        -Tamaño: Hasta 2MB<br>
+                                        <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                                    </div>
+                                    <div class="html5fileupload fileAgregarHerramietasImg" data-form="true" data-max-filesize="2048000"  data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                        <input type="file" name="file_archivo" />
+                                    </div>
+                                    <script>
+                                        $(".html5fileupload.fileAgregarHerramietasImg").html5fileupload();
                                     </script>
                                 </div>
                             </div>
@@ -1770,6 +2157,79 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function modalAgregarHerramienta() {
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Herramienta</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" action="' . URL . '/admin/frmAgregarHerramienta" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Titulo</label>
+                                        <input type="text" name="titulo" class="form-control" placeholder="Titulo" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="contenido" class="summernote"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Imagen</h3>
+                                    <div class="alert alert-info alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        Detalles de la imagen a subir:<br>
+                                        -Formato: JPG,PNG<br>
+                                        -Dimensión: Imagen Normal: 150 x 150px<br>
+                                        -Tamaño: Hasta 2MB<br>
+                                        <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                                        <strong>Importante: Subir las imagenes en las dimensiones indicadas, otras dimensiones a la no indicadas podrían no verse correctamente.</strong>
+                                    </div>
+                                    <div class="html5fileupload fileAgregarHerramienta" data-form="true" data-max-filesize="2048000"  data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                        <input type="file" name="file_archivo" />
+                                    </div>
+                                    <script>
+                                        $(".html5fileupload.fileAgregarHerramienta").html5fileupload();
+                                    </script>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary btn-lg">Agregar Imagen</button>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar Herramienta',
+            'content' => $modal
+        );
+        return $data;
+    }
+
     public function modalAgregarValores() {
         $modal = '<div class="box box-primary">
                     <div class="box-header with-border">
@@ -1886,6 +2346,15 @@ class Admin_Model extends Model {
         return $id;
     }
 
+    public function frmAgregarHerramientasImg($datos) {
+        $this->db->insert('herramientas_imagenes', array(
+            'orden' => $datos['orden'],
+            'estado' => $datos['estado']
+        ));
+        $id = $this->db->lastInsertId();
+        return $id;
+    }
+
     public function frmAgregarServiciosImg($datos) {
         $this->db->insert('servicios_imagenes', array(
             'orden' => $datos['orden'],
@@ -1929,6 +2398,17 @@ class Admin_Model extends Model {
         return $id;
     }
 
+    public function frmAgregarHerramienta($datos) {
+        $this->db->insert('herramientas_items', array(
+            'titulo' => utf8_decode($datos['titulo']),
+            'contenido' => utf8_decode($datos['contenido']),
+            'orden' => $datos['orden'],
+            'estado' => $datos['estado']
+        ));
+        $id = $this->db->lastInsertId();
+        return $id;
+    }
+
     public function frmAddSliderImg($imagenes) {
         $id = $imagenes['id'];
         $update = array(
@@ -1943,6 +2423,14 @@ class Admin_Model extends Model {
             'imagen' => $imagenes['imagenes']
         );
         $this->db->update('quienes_somos_imagenes', $update, "id = $id");
+    }
+
+    public function frmAddHerramientasImgImg($imagenes) {
+        $id = $imagenes['id'];
+        $update = array(
+            'imagen' => $imagenes['imagenes']
+        );
+        $this->db->update('herramientas_imagenes', $update, "id = $id");
     }
 
     public function frmAddServiciosImg($imagenes) {
@@ -1975,6 +2463,14 @@ class Admin_Model extends Model {
             'imagen' => $imagenes['imagenes']
         );
         $this->db->update('equipo_integrantes', $update, "id = $id");
+    }
+
+    public function frmAddHerramientaImg($imagenes) {
+        $id = $imagenes['id'];
+        $update = array(
+            'imagen' => $imagenes['imagenes']
+        );
+        $this->db->update('herramientas_items', $update, "id = $id");
     }
 
     public function datosContenido($tabla) {

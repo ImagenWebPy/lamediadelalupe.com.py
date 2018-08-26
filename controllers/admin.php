@@ -112,6 +112,22 @@ class Admin extends Controller {
             unset($_SESSION['message']);
     }
 
+    public function herramientas() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Herramientas';
+
+        $this->view->datosContenido = $this->model->datosContenido('herramientas');
+
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/herramientas/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
+
     public function listadoDTSlider() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTSlider();
@@ -121,6 +137,12 @@ class Admin extends Controller {
     public function listadoDTQuienesSomos() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTQuienesSomos();
+        echo $data;
+    }
+
+    public function listadoDTHerramientasImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTHerramientasImg();
         echo $data;
     }
 
@@ -145,6 +167,12 @@ class Admin extends Controller {
     public function listadoDTEquipo() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTEquipo();
+        echo $data;
+    }
+
+    public function listadoDTHerramientas() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTHerramientas();
         echo $data;
     }
 
@@ -191,6 +219,15 @@ class Admin extends Controller {
         echo $datos;
     }
 
+    public function modalEditarDTHerramientasImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTHerramientasImg($data);
+        echo $datos;
+    }
+
     public function modalEditarDTServiciosImg() {
         header('Content-type: application/json; charset=utf-8');
         $data = array(
@@ -224,6 +261,15 @@ class Admin extends Controller {
             'id' => $this->helper->cleanInput($_POST['id'])
         );
         $datos = $this->model->modalEditarDTEquipo($data);
+        echo $datos;
+    }
+
+    public function modalEditarDTHerramienta() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTHerramienta($data);
         echo $datos;
     }
 
@@ -264,6 +310,17 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarQuienesSomos($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarHerramientasImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarHerramientasImg($datos);
         echo json_encode($data);
     }
 
@@ -315,6 +372,19 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarEquipo($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarHerramienta() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+            'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL,
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarHerramienta($datos);
         echo json_encode($data);
     }
 
@@ -409,6 +479,41 @@ class Admin extends Controller {
                 'imagen' => $filename
             );
             $response = $this->model->uploadImgQuienesSomos($data);
+            echo json_encode($response);
+        }
+    }
+
+    public function uploadImgHerramientasImg() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkImagen('imagen', 'herramientas_imagenes', $idPost, 'background-herramientas');
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/background-herramientas/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            #REDIMENSIONAR
+            $imagen = $serverdir . $filename;
+            $imagen_final = $filename;
+            $ancho = 1920;
+            $alto = 1200;
+            $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+            #############
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgHerramientasImg($data);
             echo json_encode($response);
         }
     }
@@ -553,6 +658,41 @@ class Admin extends Controller {
         }
     }
 
+    public function uploadImgHerramienta() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkImagen('imagen', 'herramientas_items', $idPost, 'herramientas');
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/herramientas/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            #REDIMENSIONAR
+            $imagen = $serverdir . $filename;
+            $imagen_final = $filename;
+            $ancho = 380;
+            $alto = 573;
+            $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+            #############
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgHerramienta($data);
+            echo json_encode($response);
+        }
+    }
+
     public function frmEditarIndexSeccion1() {
         header('Content-type: application/json; charset=utf-8');
         $data = array(
@@ -585,6 +725,15 @@ class Admin extends Controller {
             'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
         );
         $datos = $this->model->frmEditarContenidoDirectores($data);
+        echo json_encode($datos);
+    }
+
+    public function frmEditarContenidoHerramientas() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+        );
+        $datos = $this->model->frmEditarContenidoHerramientas($data);
         echo json_encode($datos);
     }
 
@@ -627,6 +776,12 @@ class Admin extends Controller {
         echo json_encode($datos);
     }
 
+    public function modalAgregarHerramientasImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = $this->model->modalAgregarHerramientasImg();
+        echo json_encode($datos);
+    }
+
     public function modalAgregarServiciosImg() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarServiciosImg();
@@ -648,6 +803,12 @@ class Admin extends Controller {
     public function modalAgregarEquipo() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarEquipo();
+        echo json_encode($datos);
+    }
+
+    public function modalAgregarHerramienta() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = $this->model->modalAgregarHerramienta();
         echo json_encode($datos);
     }
 
@@ -751,6 +912,51 @@ class Admin extends Controller {
             ));
         }
         header('Location:' . URL . 'admin/quienes_somos/');
+    }
+
+    public function frmAgregarHerramientasImg() {
+        if (!empty($_POST)) {
+            $data = array(
+                'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+                'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+            );
+            $idPost = $this->model->frmAgregarHerramientasImg($data);
+            #IMAGENES
+            if (!empty($_FILES['file_archivo']['name'])) {
+                $error = false;
+                $dir = 'public/images/background-herramientas/';
+                $serverdir = $dir;
+                #IMAGENES
+                $newname = $idPost . '_' . $_FILES['file_archivo']['name'];
+                $fname = $this->helper->cleanUrl($newname);
+                $contents = file_get_contents($_FILES['file_archivo']['tmp_name']);
+
+                $handle = fopen($serverdir . $fname, 'w');
+                fwrite($handle, $contents);
+                fclose($handle);
+                #############
+                #SE REDIMENSIONA LA IMAGEN
+                #############
+                # ruta de la imagen a redimensionar 
+                $imagen = $serverdir . $fname;
+                # ruta de la imagen final, si se pone el mismo nombre que la imagen, esta se sobreescribe 
+                $imagen_final = $fname;
+                $ancho = 1920;
+                $alto = 1200;
+                $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+                #############
+                $imagenes = array(
+                    'id' => $idPost,
+                    'imagenes' => $fname
+                );
+                $this->model->frmAddHerramientasImgImg($imagenes);
+            }
+            Session::set('message', array(
+                'type' => 'success',
+                'mensaje' => 'Se ha agregado correctamente la imagen'
+            ));
+        }
+        header('Location:' . URL . 'admin/herramientas/');
     }
 
     public function frmAgregarServiciosImg() {
@@ -935,6 +1141,53 @@ class Admin extends Controller {
             Session::set('message', array(
                 'type' => 'success',
                 'mensaje' => 'Se ha agregado correctamente al integrante al Equipo'
+            ));
+        }
+        header('Location:' . URL . 'admin/equipo/');
+    }
+
+    public function frmAgregarHerramienta() {
+        if (!empty($_POST)) {
+            $data = array(
+                'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+                'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL,
+                'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+                'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+            );
+            $idPost = $this->model->frmAgregarHerramienta($data);
+            #IMAGENES
+            if (!empty($_FILES['file_archivo']['name'])) {
+                $error = false;
+                $dir = 'public/images/herramientas/';
+                $serverdir = $dir;
+                #IMAGENES
+                $newname = $idPost . '_' . $_FILES['file_archivo']['name'];
+                $fname = $this->helper->cleanUrl($newname);
+                $contents = file_get_contents($_FILES['file_archivo']['tmp_name']);
+
+                $handle = fopen($serverdir . $fname, 'w');
+                fwrite($handle, $contents);
+                fclose($handle);
+                #############
+                #SE REDIMENSIONA LA IMAGEN
+                #############
+                # ruta de la imagen a redimensionar 
+                $imagen = $serverdir . $fname;
+                # ruta de la imagen final, si se pone el mismo nombre que la imagen, esta se sobreescribe 
+                $imagen_final = $fname;
+                $ancho = 150;
+                $alto = 150;
+                $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+                #############
+                $imagenes = array(
+                    'id' => $idPost,
+                    'imagenes' => $fname
+                );
+                $this->model->frmAddHerramientaImg($imagenes);
+            }
+            Session::set('message', array(
+                'type' => 'success',
+                'mensaje' => 'Se ha agregado correctamente la imagen'
             ));
         }
         header('Location:' . URL . 'admin/equipo/');
