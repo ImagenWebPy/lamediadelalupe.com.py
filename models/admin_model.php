@@ -95,6 +95,19 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'equipo':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="equipo" data-rowid="equipo_" data-tabla="equipo_integrantes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="equipo" data-rowid="equipo_" data-tabla="equipo_integrantes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTEquipo"><i class="fa fa-edit"></i> Editar </a>';
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['nombre']) . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['cargo']) . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'quienes_somos':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="quienes_somos" data-rowid="quienesSomos_" data-tabla="quienes_somos_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -239,6 +252,30 @@ class Admin_Model extends Model {
             $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTDirectores"><i class="fa fa-edit"></i> Editar </a>';
             array_push($datos, array(
                 "DT_RowId" => "directores_$id",
+                'orden' => $item['orden'],
+                'nombre' => utf8_encode($item['nombre']),
+                'cargo' => utf8_encode($item['cargo']),
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTEquipo() {
+        $sql = $this->db->select("SELECT * FROM equipo_integrantes ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="equipo" data-rowid="equipo_" data-tabla="equipo_integrantes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="equipo" data-rowid="equipo_" data-tabla="equipo_integrantes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTEquipo"><i class="fa fa-edit"></i> Editar </a>';
+            array_push($datos, array(
+                "DT_RowId" => "equipo_$id",
                 'orden' => $item['orden'],
                 'nombre' => utf8_encode($item['nombre']),
                 'cargo' => utf8_encode($item['cargo']),
@@ -572,6 +609,100 @@ class Admin_Model extends Model {
         return json_encode($data);
     }
 
+    public function modalEditarDTEquipo($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from equipo_integrantes where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagenes</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarEquipo" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nombre</label>
+                                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" value="' . utf8_encode($sql[0]['nombre']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Cargo</label>
+                                        <input type="text" name="cargo" class="form-control" placeholder="Cargo" value="' . utf8_encode($sql[0]['cargo']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" name="email" class="form-control" placeholder="Email" value="' . utf8_encode($sql[0]['email']) . '">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 380 x 573px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileEquipo" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgEquipo" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileEquipo").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgEquipo" + response.id).html(response.content);
+                                        $("#equipo_" + response.id).html(response.row);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgEquipo' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/equipo/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar datos Equipo',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
     public function frmEditarSlider($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -656,6 +787,29 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarEquipo($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'nombre' => utf8_decode($datos['nombre']),
+            'cargo' => utf8_decode($datos['cargo']),
+            'email' => utf8_decode($datos['email']),
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('equipo_integrantes', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('equipo', 'equipo_integrantes', $id),
+            'message' => 'Se ha actualizado el contenido del integrante "' . $datos['nombre'] . '"'
+        );
+        return $data;
+    }
+
     public function uploadImgSlider($datos) {
         $id = $datos['id'];
         $update = array(
@@ -704,6 +858,38 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function uploadImgDirectores($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('directores_personas', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/directores/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('directores', 'directores_personas', $id)
+        );
+        return $data;
+    }
+
+    public function uploadImgEquipo($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('equipo_integrantes', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/equipo/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('equipo', 'equipo_integrantes', $id)
+        );
+        return $data;
+    }
+
     public function unlinkImagenSlider($id) {
         $sql = $this->db->select("select imagen from inicio_imagenes where id = $id");
         $dir = 'public/images/inicio/';
@@ -714,6 +900,13 @@ class Admin_Model extends Model {
         }
     }
 
+    /**
+     * 
+     * @param string $campo
+     * @param string $tabla
+     * @param int $id
+     * @param string $carpeta
+     */
     public function unlinkImagen($campo, $tabla, $id, $carpeta) {
         $sql = $this->db->select("select $campo from $tabla where id = $id");
         $dir = 'public/images/$carpeta/';
@@ -772,6 +965,19 @@ class Admin_Model extends Model {
         $data = array(
             'type' => 'success',
             'mensaje' => 'Se han actualizado el contenido de Directores.'
+        );
+        return $data;
+    }
+
+    public function frmEditarContenidoEquipo($datos) {
+        $id = 1;
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+        );
+        $this->db->update('equipo', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'mensaje' => 'Se han actualizado el contenido del Equipo.'
         );
         return $data;
     }
@@ -1025,6 +1231,82 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function modalAgregarEquipo() {
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Integrante al Equipo</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" action="' . URL . '/admin/frmAgregarEquipo" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nombre</label>
+                                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Cargo</label>
+                                        <input type="text" name="cargo" class="form-control" placeholder="Cargo" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email" class="form-control" placeholder="Email" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Imagen</h3>
+                                    <div class="alert alert-info alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        Detalles de la imagen a subir:<br>
+                                        -Formato: JPG,PNG<br>
+                                        -Dimensión: Imagen Normal: 380 x 573px<br>
+                                        -Tamaño: Hasta 2MB<br>
+                                        <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                                    </div>
+                                    <div class="html5fileupload fileAgregarEquipo" data-form="true" data-max-filesize="2048000"  data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                        <input type="file" name="file_archivo" />
+                                    </div>
+                                    <script>
+                                        $(".html5fileupload.fileAgregarEquipo").html5fileupload();
+                                    </script>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary btn-lg">Agregar Imagen</button>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar Integrante al Equipo',
+            'content' => $modal
+        );
+        return $data;
+    }
+
     public function frmAgregarSlider($datos) {
         $this->db->insert('inicio_imagenes', array(
             'orden' => $datos['orden'],
@@ -1065,6 +1347,18 @@ class Admin_Model extends Model {
         return $id;
     }
 
+    public function frmAgregarEquipo($datos) {
+        $this->db->insert('equipo_integrantes', array(
+            'nombre' => utf8_decode($datos['nombre']),
+            'cargo' => utf8_decode($datos['cargo']),
+            'email' => utf8_decode($datos['email']),
+            'orden' => $datos['orden'],
+            'estado' => $datos['estado']
+        ));
+        $id = $this->db->lastInsertId();
+        return $id;
+    }
+
     public function frmAddSliderImg($imagenes) {
         $id = $imagenes['id'];
         $update = array(
@@ -1088,13 +1382,21 @@ class Admin_Model extends Model {
         );
         $this->db->update('directores_imagenes', $update, "id = $id");
     }
-    
+
     public function frmAddDirectoresImg($imagenes) {
         $id = $imagenes['id'];
         $update = array(
             'imagen' => $imagenes['imagenes']
         );
         $this->db->update('directores_personas', $update, "id = $id");
+    }
+
+    public function frmAddEquipoImg($imagenes) {
+        $id = $imagenes['id'];
+        $update = array(
+            'imagen' => $imagenes['imagenes']
+        );
+        $this->db->update('equipo_integrantes', $update, "id = $id");
     }
 
     public function datosContenido($tabla) {
