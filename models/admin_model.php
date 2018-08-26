@@ -29,7 +29,6 @@ class Admin_Model extends Model {
     }
 
     private function rowDataTable($seccion, $tabla, $id) {
-//$sql = $this->db->select("SELECT * FROM $tabla WHERE id = $id;");
         $data = '';
         switch ($tabla) {
             case 'usuario':
@@ -108,6 +107,18 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'servicios':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios" data-rowid="servicios_" data-tabla="servicios_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios" data-rowid="servicios_" data-tabla="servicios_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTServicios"><i class="fa fa-edit"></i> Editar </a>';
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['titulo']) . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'valores':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="valores" data-rowid="valores_" data-tabla="valores_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -129,6 +140,23 @@ class Admin_Model extends Model {
                 $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTQuienesSomos"><i class="fa fa-edit"></i> Editar </a>';
                 if (!empty($sql[0]['imagen'])) {
                     $img = '<img src="' . URL . 'public/images/background-quienes_somos/' . $sql[0]['imagen'] . '" style="width: 160px;">';
+                } else {
+                    $img = '-';
+                }
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . $img . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
+            case 'servicios_img':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios_img" data-rowid="servicios_img_" data-tabla="servicios_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios_img" data-rowid="servicios_img_" data-tabla="servicios_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTServiciosImg"><i class="fa fa-edit"></i> Editar </a>';
+                if (!empty($sql[0]['imagen'])) {
+                    $img = '<img src="' . URL . 'public/images/background-servicios/' . $sql[0]['imagen'] . '" style="width: 160px;">';
                 } else {
                     $img = '-';
                 }
@@ -213,6 +241,34 @@ class Admin_Model extends Model {
             }
             array_push($datos, array(
                 "DT_RowId" => "quienesSomos_$id",
+                'orden' => $item['orden'],
+                'imagen' => $img,
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTServiciosImg() {
+        $sql = $this->db->select("SELECT * FROM servicios_imagenes ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios_img" data-rowid="servicios_img_" data-tabla="servicios_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios_img" data-rowid="servicios_img_" data-tabla="servicios_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTServiciosImg"><i class="fa fa-edit"></i> Editar </a>';
+            if (!empty($item['imagen'])) {
+                $img = '<img src="' . URL . 'public/images/background-servicios/' . $item['imagen'] . '" style="width: 160px;">';
+            } else {
+                $img = '-';
+            }
+            array_push($datos, array(
+                "DT_RowId" => "servicios_img_$id",
                 'orden' => $item['orden'],
                 'imagen' => $img,
                 'estado' => $estado,
@@ -314,6 +370,29 @@ class Admin_Model extends Model {
                 "DT_RowId" => "valores_$id",
                 'orden' => $item['orden'],
                 'descripcion' => utf8_encode($item['descripcion']),
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTServicios() {
+        $sql = $this->db->select("SELECT * FROM servicios_items ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios" data-rowid="servicios_" data-tabla="servicios_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios" data-rowid="servicios_" data-tabla="servicios_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTServicios"><i class="fa fa-edit"></i> Editar </a>';
+            array_push($datos, array(
+                "DT_RowId" => "servicios_$id",
+                'orden' => $item['orden'],
+                'titulo' => utf8_encode($item['titulo']),
                 'estado' => $estado,
                 'editar' => $btnEditar
             ));
@@ -464,7 +543,81 @@ class Admin_Model extends Model {
                     });
                 </script>';
         $data = array(
-            'titulo' => 'Editar Imagen de Fondo - Directores',
+            'titulo' => 'Editar Imagen de Fondo - Quienes Somos',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
+    public function modalEditarDTServiciosImg($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from servicios_imagenes where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagen de Fondo</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarServiciosImg" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 1920 x 1200px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileServiciosImg" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgServicios" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileServiciosImg").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgServicios" + response.id).html(response.content);
+                                        $("#servicios_img_" + response.id).html(response.row);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgServicios' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/background-servicios/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar Imagen de Fondo - Servicios',
             'content' => $modal
         );
         return json_encode($data);
@@ -738,6 +891,67 @@ class Admin_Model extends Model {
         return json_encode($data);
     }
 
+    public function modalEditarDTServicios($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from servicios_items where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarServicios" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Titulo</label>
+                                        <input type="text" name="titulo" class="form-control" placeholder="Titulo" value="' . utf8_encode($sql[0]['titulo']) . '">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="contenido" class="summernote">' . utf8_encode($sql[0]['contenido']) . '</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar datos Servicio',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
     public function modalEditarDTValores($datos) {
         $id = $datos['id'];
         $sql = $this->db->select("select * from valores_items where id = $id");
@@ -831,6 +1045,26 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarServiciosImg($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('servicios_imagenes', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('servicios_img', 'servicios_imagenes', $id),
+            'message' => 'Se ha actualizado el contenido de la imagen'
+        );
+        return $data;
+    }
+
     public function frmEditarDirectoresImg($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -898,6 +1132,28 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarServicios($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+            'contenido' => utf8_decode($datos['contenido']),
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('servicios_items', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('servicios', 'servicios_items', $id),
+            'message' => 'Se ha actualizado el contenido del servicio "' . $datos['titulo'] . '"'
+        );
+        return $data;
+    }
+
     public function frmEditarValores($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -947,6 +1203,22 @@ class Admin_Model extends Model {
             'id' => $id,
             'content' => $contenido,
             'row' => $this->rowDataTable('quienes_somos', 'quienes_somos_imagenes', $id)
+        );
+        return $data;
+    }
+
+    public function uploadImgServicios($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('servicios_imagenes', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/background-servicios/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('servicios_img', 'servicios_imagenes', $id)
         );
         return $data;
     }
@@ -1104,6 +1376,19 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarContenidoServicios($datos) {
+        $id = 1;
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+        );
+        $this->db->update('servicios', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'mensaje' => 'Se han actualizado el contenido de Servicios.'
+        );
+        return $data;
+    }
+
     public function modalAgregarSlider() {
         $modal = '<div class="box box-primary">
                     <div class="box-header with-border">
@@ -1194,6 +1479,62 @@ class Admin_Model extends Model {
                                     </div>
                                     <script>
                                         $(".html5fileupload.fileAgregarQuienesSomos").html5fileupload();
+                                    </script>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary btn-lg">Agregar Imagen</button>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar Imagen',
+            'content' => $modal
+        );
+        return $data;
+    }
+
+    public function modalAgregarServiciosImg() {
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Imagen</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" action="' . URL . '/admin/frmAgregarServiciosImg" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Imagen</h3>
+                                    <div class="alert alert-info alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        Detalles de la imagen a subir:<br>
+                                        -Formato: JPG,PNG<br>
+                                        -Dimensión: Imagen Normal: 1920 x 1200<br>
+                                        -Tamaño: Hasta 2MB<br>
+                                        <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                                    </div>
+                                    <div class="html5fileupload fileAgregarServiciosImg" data-form="true" data-max-filesize="2048000"  data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                        <input type="file" name="file_archivo" />
+                                    </div>
+                                    <script>
+                                        $(".html5fileupload.fileAgregarServiciosImg").html5fileupload();
                                     </script>
                                 </div>
                             </div>
@@ -1474,6 +1815,59 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function modalAgregarServicios() {
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Servicios</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmAgregarServicios" method="POST">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Titulo</label>
+                                        <input type="text" name="titulo" class="form-control" placeholder="Tirulo" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="contenido" class="summernote"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary btn-lg">Agregar Contenido</button>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar item a Servicios',
+            'content' => $modal
+        );
+        return $data;
+    }
+
     public function frmAgregarSlider($datos) {
         $this->db->insert('inicio_imagenes', array(
             'orden' => $datos['orden'],
@@ -1485,6 +1879,15 @@ class Admin_Model extends Model {
 
     public function frmAgregarQuienesSomos($datos) {
         $this->db->insert('quienes_somos_imagenes', array(
+            'orden' => $datos['orden'],
+            'estado' => $datos['estado']
+        ));
+        $id = $this->db->lastInsertId();
+        return $id;
+    }
+
+    public function frmAgregarServiciosImg($datos) {
+        $this->db->insert('servicios_imagenes', array(
             'orden' => $datos['orden'],
             'estado' => $datos['estado']
         ));
@@ -1542,6 +1945,14 @@ class Admin_Model extends Model {
         $this->db->update('quienes_somos_imagenes', $update, "id = $id");
     }
 
+    public function frmAddServiciosImg($imagenes) {
+        $id = $imagenes['id'];
+        $update = array(
+            'imagen' => $imagenes['imagenes']
+        );
+        $this->db->update('servicios_imagenes', $update, "id = $id");
+    }
+
     public function frmAddDirectoresImgImg($imagenes) {
         $id = $imagenes['id'];
         $update = array(
@@ -1594,6 +2005,34 @@ class Admin_Model extends Model {
             . '<td>' . $btnEditar . '</td>'
             . '</tr>',
             'mensaje' => 'Se ha agregado correctamente Item a Valores'
+        );
+        return $data;
+    }
+
+    public function frmAgregarServicios($datos) {
+        $this->db->insert('servicios_items', array(
+            'titulo' => utf8_decode($datos['titulo']),
+            'contenido' => utf8_decode($datos['contenido']),
+            'orden' => utf8_decode($datos['orden']),
+            'estado' => (!empty($datos['estado'])) ? $datos['estado'] : 0
+        ));
+        $id = $this->db->lastInsertId();
+        $sql = $this->db->select("select * from servicios_items where id = $id");
+        if ($sql[0]['estado'] == 1) {
+            $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios" data-rowid="servicios_" data-tabla="servicios_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+        } else {
+            $estado = '<a class="pointer btnCambiarEstado" data-seccion="servicios" data-rowid="servicios_" data-tabla="servicios_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+        }
+        $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTServicios"><i class="fa fa-edit"></i> Editar </a>';
+        $data = array(
+            'type' => 'success',
+            'content' => '<tr id="servicios_' . $id . '" role="row" class="odd">'
+            . '<td class="sorting_1">' . $sql[0]['orden'] . '</td>'
+            . '<td>' . utf8_encode($sql[0]['titulo']) . '</td>'
+            . '<td>' . $estado . '</td>'
+            . '<td>' . $btnEditar . '</td>'
+            . '</tr>',
+            'mensaje' => 'Se ha agregado correctamente el item a Servicios'
         );
         return $data;
     }

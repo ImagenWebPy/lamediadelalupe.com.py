@@ -64,6 +64,22 @@ class Admin extends Controller {
             unset($_SESSION['message']);
     }
 
+    public function servicios() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Valores';
+
+        $this->view->datosContenido = $this->model->datosContenido('servicios');
+
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/servicios/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
+
     public function directores() {
         $this->view->helper = $this->helper;
         $this->view->title = 'Quienes Somos';
@@ -108,6 +124,12 @@ class Admin extends Controller {
         echo $data;
     }
 
+    public function listadoDTServiciosImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTServiciosImg();
+        echo $data;
+    }
+
     public function listadoDTDirectoresImg() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTDirectoresImg();
@@ -129,6 +151,12 @@ class Admin extends Controller {
     public function listadoDTValores() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTValores();
+        echo $data;
+    }
+
+    public function listadoDTServicios() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTServicios();
         echo $data;
     }
 
@@ -163,6 +191,15 @@ class Admin extends Controller {
         echo $datos;
     }
 
+    public function modalEditarDTServiciosImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTServiciosImg($data);
+        echo $datos;
+    }
+
     public function modalEditarDTDirectoresImg() {
         header('Content-type: application/json; charset=utf-8');
         $data = array(
@@ -187,6 +224,15 @@ class Admin extends Controller {
             'id' => $this->helper->cleanInput($_POST['id'])
         );
         $datos = $this->model->modalEditarDTEquipo($data);
+        echo $datos;
+    }
+
+    public function modalEditarDTServicios() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTServicios($data);
         echo $datos;
     }
 
@@ -218,6 +264,17 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarQuienesSomos($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarServiciosImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarServiciosImg($datos);
         echo json_encode($data);
     }
 
@@ -258,6 +315,19 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarEquipo($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarServicios() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+            'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL,
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarServicios($datos);
         echo json_encode($data);
     }
 
@@ -339,6 +409,41 @@ class Admin extends Controller {
                 'imagen' => $filename
             );
             $response = $this->model->uploadImgQuienesSomos($data);
+            echo json_encode($response);
+        }
+    }
+
+    public function uploadImgServicios() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkImagen('imagen', 'servicios_imagenes', $idPost, 'background-servicios');
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/background-servicios/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            #REDIMENSIONAR
+            $imagen = $serverdir . $filename;
+            $imagen_final = $filename;
+            $ancho = 1920;
+            $alto = 1200;
+            $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+            #############
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgServicios($data);
             echo json_encode($response);
         }
     }
@@ -501,6 +606,15 @@ class Admin extends Controller {
         echo json_encode($datos);
     }
 
+    public function frmEditarContenidoServicios() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+        );
+        $datos = $this->model->frmEditarContenidoServicios($data);
+        echo json_encode($datos);
+    }
+
     public function modalAgregarSlider() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarSlider();
@@ -510,6 +624,12 @@ class Admin extends Controller {
     public function modalAgregarQuienesSomos() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarQuienesSomos();
+        echo json_encode($datos);
+    }
+
+    public function modalAgregarServiciosImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = $this->model->modalAgregarServiciosImg();
         echo json_encode($datos);
     }
 
@@ -534,6 +654,12 @@ class Admin extends Controller {
     public function modalAgregarValores() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarValores();
+        echo json_encode($datos);
+    }
+
+    public function modalAgregarServicios() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = $this->model->modalAgregarServicios();
         echo json_encode($datos);
     }
 
@@ -625,6 +751,51 @@ class Admin extends Controller {
             ));
         }
         header('Location:' . URL . 'admin/quienes_somos/');
+    }
+
+    public function frmAgregarServiciosImg() {
+        if (!empty($_POST)) {
+            $data = array(
+                'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+                'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+            );
+            $idPost = $this->model->frmAgregarServiciosImg($data);
+            #IMAGENES
+            if (!empty($_FILES['file_archivo']['name'])) {
+                $error = false;
+                $dir = 'public/images/background-servicios/';
+                $serverdir = $dir;
+                #IMAGENES
+                $newname = $idPost . '_' . $_FILES['file_archivo']['name'];
+                $fname = $this->helper->cleanUrl($newname);
+                $contents = file_get_contents($_FILES['file_archivo']['tmp_name']);
+
+                $handle = fopen($serverdir . $fname, 'w');
+                fwrite($handle, $contents);
+                fclose($handle);
+                #############
+                #SE REDIMENSIONA LA IMAGEN
+                #############
+                # ruta de la imagen a redimensionar 
+                $imagen = $serverdir . $fname;
+                # ruta de la imagen final, si se pone el mismo nombre que la imagen, esta se sobreescribe 
+                $imagen_final = $fname;
+                $ancho = 1920;
+                $alto = 1200;
+                $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+                #############
+                $imagenes = array(
+                    'id' => $idPost,
+                    'imagenes' => $fname
+                );
+                $this->model->frmAddServiciosImg($imagenes);
+            }
+            Session::set('message', array(
+                'type' => 'success',
+                'mensaje' => 'Se ha agregado correctamente la imagen'
+            ));
+        }
+        header('Location:' . URL . 'admin/servicios/');
     }
 
     public function frmAgregarDirectoresImg() {
@@ -777,6 +948,18 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmAgregarValores($datos);
+        echo json_encode($data);
+    }
+
+    public function frmAgregarServicios() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+            'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL,
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmAgregarServicios($datos);
         echo json_encode($data);
     }
 
