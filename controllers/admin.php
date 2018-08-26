@@ -48,6 +48,22 @@ class Admin extends Controller {
             unset($_SESSION['message']);
     }
 
+    public function valores() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Valores';
+
+        $this->view->datosContenido = $this->model->datosContenido('valores');
+
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/valores/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
+
     public function directores() {
         $this->view->helper = $this->helper;
         $this->view->title = 'Quienes Somos';
@@ -110,6 +126,12 @@ class Admin extends Controller {
         echo $data;
     }
 
+    public function listadoDTValores() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTValores();
+        echo $data;
+    }
+
     public function cambiarEstado() {
         header('Content-type: application/json; charset=utf-8');
         $datos = array(
@@ -165,6 +187,15 @@ class Admin extends Controller {
             'id' => $this->helper->cleanInput($_POST['id'])
         );
         $datos = $this->model->modalEditarDTEquipo($data);
+        echo $datos;
+    }
+
+    public function modalEditarDTValores() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTValores($data);
         echo $datos;
     }
 
@@ -227,6 +258,18 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarEquipo($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarValores() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'descripcion' => (!empty($_POST['descripcion'])) ? $this->helper->cleanInput($_POST['descripcion']) : NULL,
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarValores($datos);
         echo json_encode($data);
     }
 
@@ -449,6 +492,15 @@ class Admin extends Controller {
         echo json_encode($datos);
     }
 
+    public function frmEditarContenidoValores() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+        );
+        $datos = $this->model->frmEditarContenidoValores($data);
+        echo json_encode($datos);
+    }
+
     public function modalAgregarSlider() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarSlider();
@@ -476,6 +528,12 @@ class Admin extends Controller {
     public function modalAgregarEquipo() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarEquipo();
+        echo json_encode($datos);
+    }
+
+    public function modalAgregarValores() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = $this->model->modalAgregarValores();
         echo json_encode($datos);
     }
 
@@ -662,7 +720,7 @@ class Admin extends Controller {
         }
         header('Location:' . URL . 'admin/directores/');
     }
-    
+
     public function frmAgregarEquipo() {
         if (!empty($_POST)) {
             $data = array(
@@ -709,6 +767,17 @@ class Admin extends Controller {
             ));
         }
         header('Location:' . URL . 'admin/equipo/');
+    }
+
+    public function frmAgregarValores() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'descripcion' => (!empty($_POST['descripcion'])) ? $this->helper->cleanInput($_POST['descripcion']) : NULL,
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmAgregarValores($datos);
+        echo json_encode($data);
     }
 
 }

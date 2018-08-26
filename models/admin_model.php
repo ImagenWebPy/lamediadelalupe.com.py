@@ -108,6 +108,18 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'valores':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="valores" data-rowid="valores_" data-tabla="valores_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="valores" data-rowid="valores_" data-tabla="valores_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTValores"><i class="fa fa-edit"></i> Editar </a>';
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['descripcion']) . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'quienes_somos':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="quienes_somos" data-rowid="quienesSomos_" data-tabla="quienes_somos_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -279,6 +291,29 @@ class Admin_Model extends Model {
                 'orden' => $item['orden'],
                 'nombre' => utf8_encode($item['nombre']),
                 'cargo' => utf8_encode($item['cargo']),
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTValores() {
+        $sql = $this->db->select("SELECT * FROM valores_items ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="valores" data-rowid="valores_" data-tabla="valores_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="valores" data-rowid="valores_" data-tabla="valores_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTValores"><i class="fa fa-edit"></i> Editar </a>';
+            array_push($datos, array(
+                "DT_RowId" => "valores_$id",
+                'orden' => $item['orden'],
+                'descripcion' => utf8_encode($item['descripcion']),
                 'estado' => $estado,
                 'editar' => $btnEditar
             ));
@@ -703,6 +738,59 @@ class Admin_Model extends Model {
         return json_encode($data);
     }
 
+    public function modalEditarDTValores($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from valores_items where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagenes</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarValores" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Descripción</label>
+                                        <input type="text" name="descripcion" class="form-control" placeholder="Descripción" value="' . utf8_encode($sql[0]['descripcion']) . '">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar datos Valores',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
     public function frmEditarSlider($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -806,6 +894,27 @@ class Admin_Model extends Model {
             'id' => $id,
             'content' => $this->rowDataTable('equipo', 'equipo_integrantes', $id),
             'message' => 'Se ha actualizado el contenido del integrante "' . $datos['nombre'] . '"'
+        );
+        return $data;
+    }
+
+    public function frmEditarValores($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'descripcion' => utf8_decode($datos['descripcion']),
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('valores_items', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('valores', 'valores_items', $id),
+            'mensaje' => 'Se ha actualizado el contenido del valor "' . $datos['descripcion'] . '"'
         );
         return $data;
     }
@@ -978,6 +1087,19 @@ class Admin_Model extends Model {
         $data = array(
             'type' => 'success',
             'mensaje' => 'Se han actualizado el contenido del Equipo.'
+        );
+        return $data;
+    }
+
+    public function frmEditarContenidoValores($datos) {
+        $id = 1;
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+        );
+        $this->db->update('valores', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'mensaje' => 'Se han actualizado el contenido de Valores.'
         );
         return $data;
     }
@@ -1307,6 +1429,51 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function modalAgregarValores() {
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Valores</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmAgregarValores" method="POST">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Descripción</label>
+                                        <input type="text" name="descripcion" class="form-control" placeholder="Descripcion" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary btn-lg">Agregar Valores</button>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar item a Valores',
+            'content' => $modal
+        );
+        return $data;
+    }
+
     public function frmAgregarSlider($datos) {
         $this->db->insert('inicio_imagenes', array(
             'orden' => $datos['orden'],
@@ -1402,6 +1569,33 @@ class Admin_Model extends Model {
     public function datosContenido($tabla) {
         $sql = $this->db->select("select * from $tabla where id = 1");
         return $sql[0];
+    }
+
+    public function frmAgregarValores($datos) {
+        $this->db->insert('valores_items', array(
+            'descripcion' => utf8_decode($datos['descripcion']),
+            'orden' => utf8_decode($datos['orden']),
+            'estado' => (!empty($datos['estado'])) ? $datos['estado'] : 0
+        ));
+        $id = $this->db->lastInsertId();
+        $sql = $this->db->select("select * from valores_items where id = $id");
+        if ($sql[0]['estado'] == 1) {
+            $estado = '<a class="pointer btnCambiarEstado" data-seccion="valores" data-rowid="valores_" data-tabla="valores_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+        } else {
+            $estado = '<a class="pointer btnCambiarEstado" data-seccion="valores" data-rowid="valores_" data-tabla="valores_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+        }
+        $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTValores"><i class="fa fa-edit"></i> Editar </a>';
+        $data = array(
+            'type' => 'success',
+            'content' => '<tr id="seccion2_' . $id . '" role="row" class="odd">'
+            . '<td class="sorting_1">' . $sql[0]['orden'] . '</td>'
+            . '<td>' . utf8_encode($sql[0]['descripcion']) . '</td>'
+            . '<td>' . $estado . '</td>'
+            . '<td>' . $btnEditar . '</td>'
+            . '</tr>',
+            'mensaje' => 'Se ha agregado correctamente Item a Valores'
+        );
+        return $data;
     }
 
 }
