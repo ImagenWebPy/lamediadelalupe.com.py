@@ -107,6 +107,19 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'noticias':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="noticias" data-rowid="noticia_" data-tabla="multimedia_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="noticias" data-rowid="noticia_" data-tabla="multimedia_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTNoticias"><i class="fa fa-edit"></i> Editar </a>';
+                $data = '<td>' . $sql[0]['id'] . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['titulo']) . '</td>'
+                        . '<td>' . date('d-m-Y', strtotime($sql[0]['fecha'])) . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'herramienta':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramienta" data-rowid="herramienta_" data-tabla="herramientas_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -404,6 +417,30 @@ class Admin_Model extends Model {
                 'orden' => $item['orden'],
                 'nombre' => utf8_encode($item['nombre']),
                 'cargo' => utf8_encode($item['cargo']),
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTNoticias() {
+        $sql = $this->db->select("SELECT * FROM multimedia_items ORDER BY fecha DESC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="noticias" data-rowid="noticia_" data-tabla="multimedia_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="noticias" data-rowid="noticia_" data-tabla="multimedia_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTNoticias"><i class="fa fa-edit"></i> Editar </a>';
+            array_push($datos, array(
+                "DT_RowId" => "noticia_$id",
+                'id' => $item['id'],
+                'titulo' => utf8_encode($item['titulo']),
+                'fecha' => date('d-m-Y', strtotime($item['fecha'])),
                 'estado' => $estado,
                 'editar' => $btnEditar
             ));
@@ -1028,6 +1065,132 @@ class Admin_Model extends Model {
             $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/equipo/' . $sql[0]['imagen'] . '">';
         }
         $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar datos Equipo',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
+    public function modalEditarDTNoticias($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from multimedia_items where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagenes</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarNoticias" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Titulo</label>
+                                        <input type="text" name="titulo" class="form-control" placeholder="Titulo" value="' . utf8_encode($sql[0]['titulo']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>YouTube ID</label>
+                                        <input type="text" name="youtube" class="form-control" placeholder="Titulo" value="' . utf8_encode($sql[0]['youtube']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Vimeo ID</label>
+                                        <input type="text" name="vimeo" class="form-control" placeholder="Titulo" value="' . utf8_encode($sql[0]['vimeo']) . '">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="contenido" class="summernote">' . utf8_encode($sql[0]['contenido']) . '</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 500 x 400px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileNoticiasImg" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgNoticias" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileNoticiasImg").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgNoticias" + response.id).html(response.content);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgNoticias' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/multimedia/imagenes/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Video</h3>
+                                <div class="alert alert-info alert-dismissable">
+                                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                    Detalles de la imagen a subir:<br>
+                                    -Formato: MP4<br>
+                                    -Dimensión: 480,720,1920
+                                    -Tamaño: Hasta 40MB<br>
+                                </div>
+                                <div class="html5fileupload fileNoticiasVideo" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadVideoNoticias" data-valid-extensions="mp4,MP4" style="width: 100%;">
+                                    <input type="file" name="file_video" />
+                                </div>
+                                <script>
+                                    $(".html5fileupload.fileNoticiasVideo").html5fileupload({
+                                        data: {id: ' . $id . '},
+                                        onAfterStartSuccess: function (response) {
+                                            $("#imgVideos" + response.id).html(response.content);
+                                        }
+                                    });
+                                </script>
+                            </div>
+                            <div class="col-md-12" id="imgVideos' . $id . '">';
+        if (!empty($sql[0]['archivo'])) {
+            $modal .= '         <video controls>
+                                    <source src="' . URL . 'public/multimedia/videos/' . $sql[0]['archivo'] . '" type="video/mp4">
+                                </video>';
+        }
+        $modal .= '         </div>
+                        </div>
                     </div>
                 </div>
                 <script>
@@ -1690,6 +1853,19 @@ class Admin_Model extends Model {
         $data = array(
             'type' => 'success',
             'mensaje' => 'Se han actualizado el contenido del Equipo.'
+        );
+        return $data;
+    }
+
+    public function frmEditarContenidoNoticias($datos) {
+        $id = 1;
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+        );
+        $this->db->update('multimedia', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'mensaje' => 'Se han actualizado el contenido de la Noticia.'
         );
         return $data;
     }

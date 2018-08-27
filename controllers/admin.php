@@ -111,6 +111,22 @@ class Admin extends Controller {
         if (!empty($_SESSION['message']))
             unset($_SESSION['message']);
     }
+    
+    public function noticias() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Noticias';
+
+        $this->view->datosContenido = $this->model->datosContenido('multimedia');
+
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/noticias/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
 
     public function herramientas() {
         $this->view->helper = $this->helper;
@@ -167,6 +183,12 @@ class Admin extends Controller {
     public function listadoDTEquipo() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTEquipo();
+        echo $data;
+    }
+    
+    public function listadoDTNoticias() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTNoticias();
         echo $data;
     }
 
@@ -261,6 +283,15 @@ class Admin extends Controller {
             'id' => $this->helper->cleanInput($_POST['id'])
         );
         $datos = $this->model->modalEditarDTEquipo($data);
+        echo $datos;
+    }
+    
+    public function modalEditarDTNoticias() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTNoticias($data);
         echo $datos;
     }
 
@@ -743,6 +774,15 @@ class Admin extends Controller {
             'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
         );
         $datos = $this->model->frmEditarContenidoEquipo($data);
+        echo json_encode($datos);
+    }
+   
+    public function frmEditarContenidoNoticias() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+        );
+        $datos = $this->model->frmEditarContenidoNoticias($data);
         echo json_encode($datos);
     }
 
