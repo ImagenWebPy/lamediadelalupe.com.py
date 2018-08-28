@@ -29,7 +29,7 @@
 <script src="<?= URL; ?>public/bower_components/modernizr/modernizr.js"></script>
 <script src="<?= URL; ?>public/lib/SmoothScroll-1.2.1/SmoothScroll.js"></script>
 <script src="<?= URL; ?>public/bower_components/jquery-cookie/jquery.cookie.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7fLf_oDK9bVgP3sgOuTVvR_BFrluHSik&sensor=false"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnxoZOKSezOlG0FDKqkRPifMFLyzRa_ok 	 "></script>
 <script src="<?= URL; ?>public/bower_components/jqBootstrapValidation/dist/jqBootstrapValidation-1.3.7.min.js"></script>
 <script src="<?= URL; ?>public/bower_components/minicolors/jquery.minicolors.min.js"></script>
 <script src="<?= URL; ?>public/bower_components/slick.js/slick/slick.min.js"></script>

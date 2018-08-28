@@ -267,7 +267,7 @@
                             <p class="big-font">
                                 <b>
                                     <a href="mailto:<?= utf8_encode($this->datosContacto['datos']['email']); ?>"><?= utf8_encode($this->datosContacto['datos']['email']); ?></a><br/>
-                                    <a href="http://www.ouraddress.com">www.ouraddress.com</a>
+                                    <a href=<?= utf8_encode($this->datosContacto['datos']['web']); ?>"><?= utf8_encode($this->datosContacto['datos']['web']); ?></a>
                                 </b>
                             </p>
                         </div>
