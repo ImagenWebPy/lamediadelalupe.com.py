@@ -7,7 +7,7 @@ class Index extends Controller {
     }
 
     public function index() {
-        $this->view->title = TITLE . ' Inicio';
+        $this->view->title = TITLE;
 
         #paremetros
         $this->view->mostrarMenu = $this->helper->mostrarMenu();

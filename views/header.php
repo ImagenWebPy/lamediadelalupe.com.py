@@ -4,8 +4,8 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title><?= $this->title; ?></title>
-        <meta name="description" content="Onepage Parallax Site" />
-        <meta name="keywords" content="onepage, parallax" />
+        <meta name="description" content="Queremos dejar una marca en la vida de las personas." />
+        <meta name="keywords" content="La Media, lupe, la media de la lupe" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="<?= URL; ?>public/bower_components/fontawesome/css/font-awesome.min.css" />
         <link rel="stylesheet" href="<?= URL; ?>public/bower_components/animate.css/animate.min.css" />
@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="<?= URL; ?>public/lib/linecons/style.css" />
         <link rel="stylesheet" href="<?= URL; ?>public/styles/style.min.css" />
         <link rel="stylesheet" href="<?= URL; ?>public/styles/theme-custom.css" />
-        <link rel="shortcut icon" href="<?= URL; ?>public/images/favicon.ico" type="image/x-icon" />
+<!--        <link rel="shortcut icon" href="<?= URL; ?>public/images/favicon.ico" type="image/x-icon" />
         <link rel="apple-touch-icon" href="<?= URL; ?>public/images/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="57x57" href="<?= URL; ?>public/images/apple-touch-icon-57x57.png" />
         <link rel="apple-touch-icon" sizes="72x72" href="<?= URL; ?>public/images/apple-touch-icon-72x72.png" />
@@ -24,7 +24,7 @@
         <link rel="apple-touch-icon" sizes="114x114" href="<?= URL; ?>public/images/apple-touch-icon-114x114.png" />
         <link rel="apple-touch-icon" sizes="120x120" href="<?= URL; ?>public/images/apple-touch-icon-120x120.png" />
         <link rel="apple-touch-icon" sizes="144x144" href="<?= URL; ?>public/images/apple-touch-icon-144x144.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="<?= URL; ?>public/images/apple-touch-icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="<?= URL; ?>public/images/apple-touch-icon-152x152.png" />-->
     </head>
     <body class="state1 background-100-e">
         <div class="ext-nav background-95-h page-transition">
