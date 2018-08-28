@@ -85,8 +85,9 @@
         <nav class="navbar navbar-default navbar-fixed-top page-transition colors-e background-solid" role="navigation" id="top-nav">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="menu-toggle ext-nav-toggle visible-xs-block" data-target=".ext-nav" href="#"><span></span></a>
-                    <a class="menu-toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" href="#"><span></span></a>
+<!--                    <a class="menu-toggle ext-nav-toggle visible-xs-block" data-target=".ext-nav" href="#"><span></span></a>-->
+<!--                    <a class="menu-toggle ext-nav-toggle visible-xs-block" data-target="" href="#"><span></span></a>
+                    <a class="menu-toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" href="#"><span></span></a>-->
                     <a class="navbar-brand" href="<?= URL; ?>"><img src="<?= URL; ?>public/images/logo.png"></a>
                 </div>
                 <div class="collapse navbar-collapse">
@@ -94,7 +95,7 @@
                         <?php foreach ($this->mostrarMenu as $menu): ?>
                             <li><a href="#<?= $menu['id_menu']; ?>" class="hover-effect"><?= utf8_encode($menu['descripcion']); ?></a></li>
                         <?php endforeach; ?>
-                        <li class="hidden-xs"><a class="menu-toggle ext-nav-toggle" data-target=".ext-nav" href="#"><span></span></a></li>
+                        <li class="hidden-xs"><a class="menu-toggle ext-nav-toggle" data-target="" href="#"><span></span></a></li>
                     </ul>
                 </div>
             </div>

@@ -85,7 +85,7 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-6 pull-right">
-                            <button type="button" class="btn btn-block btn-primary btnAgregarContenido" data-url="modalAgregarNoticias">Agregar Integrante</button>
+                            <button type="button" class="btn btn-block btn-primary btnAgregarContenido" data-url="modalAgregarNoticias">Agregar Noticia</button>
                         </div>
                     </div>
                 </div>

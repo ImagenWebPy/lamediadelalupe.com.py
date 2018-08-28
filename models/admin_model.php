@@ -107,6 +107,19 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'clientes':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="clientes" data-rowid="clientes_" data-tabla="clientes_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="clientes" data-rowid="clientes_" data-tabla="clientes_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTClientes"><i class="fa fa-edit"></i> Editar </a>';
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['nombre']) . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['tipo']) . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'noticias':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="noticias" data-rowid="noticia_" data-tabla="multimedia_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -417,6 +430,30 @@ class Admin_Model extends Model {
                 'orden' => $item['orden'],
                 'nombre' => utf8_encode($item['nombre']),
                 'cargo' => utf8_encode($item['cargo']),
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTClientes() {
+        $sql = $this->db->select("SELECT * FROM clientes_items ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="clientes" data-rowid="clientes_" data-tabla="clientes_items" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="clientes" data-rowid="clientes_" data-tabla="clientes_items" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTClientes"><i class="fa fa-edit"></i> Editar </a>';
+            array_push($datos, array(
+                "DT_RowId" => "clientes_$id",
+                'orden' => $item['orden'],
+                'nombre' => utf8_encode($item['nombre']),
+                'tipo' => utf8_encode($item['tipo']),
                 'estado' => $estado,
                 'editar' => $btnEditar
             ));
@@ -1082,6 +1119,107 @@ class Admin_Model extends Model {
         return json_encode($data);
     }
 
+    public function modalEditarDTClientes($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from clientes_items where id = $id");
+        $tipos = $this->helper->getEnumOptions('clientes_items', 'tipo');
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagenes</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarClientes" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nombre</label>
+                                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" value="' . utf8_encode($sql[0]['nombre']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tipo</label>
+                                        <select class="form-control m-b" name="tipo" required> 
+                                            <option value="">Seleccione un Rol</option>';
+        foreach ($tipos as $item) {
+            $selected = ($item == $sql[0]['tipo']) ? 'selected' : '';
+            $modal .= '                     <option value="' . $item . '" ' . $selected . '>' . $item . '</option>';
+        }
+        $modal .= '                </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="descripcion" class="summernote">' . utf8_encode($sql[0]['descripcion']) . '</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 500 x 400px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileClientes" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgClientes" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileClientes").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgClientes" + response.id).html(response.content);
+                                        $("#clientes_" + response.id).html(response.row);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgClientes' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/clientes/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar datos Cliente',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
     public function modalEditarDTNoticias($datos) {
         $id = $datos['id'];
         $sql = $this->db->select("select * from multimedia_items where id = $id");
@@ -1115,6 +1253,14 @@ class Admin_Model extends Model {
                                     <div class="form-group">
                                         <label>Vimeo ID</label>
                                         <input type="text" name="vimeo" class="form-control" placeholder="Titulo" value="' . utf8_encode($sql[0]['vimeo']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group" id="data_1">
+                                        <label class="font-normal">Fecha Publicación</label>
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="fecha" value="' . date('d/m/Y', strtotime($sql[0]['fecha'])) . '">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1171,7 +1317,7 @@ class Admin_Model extends Model {
                                     -Dimensión: 480,720,1920
                                     -Tamaño: Hasta 40MB<br>
                                 </div>
-                                <div class="html5fileupload fileNoticiasVideo" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadVideoNoticias" data-valid-extensions="mp4,MP4" style="width: 100%;">
+                                <div class="html5fileupload fileNoticiasVideo" data-max-filesize="40960000" data-url="' . URL . 'admin/uploadVideoNoticias" data-valid-extensions="mp4,MP4" style="width: 100%;">
                                     <input type="file" name="file_video" />
                                 </div>
                                 <script>
@@ -1206,6 +1352,113 @@ class Admin_Model extends Model {
             'content' => $modal
         );
         return json_encode($data);
+    }
+
+    public function modalAgregarNoticias() {
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Noticia</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" action="' . URL . 'admin/frmAgregarNoticia" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Titulo</label>
+                                        <input type="text" name="titulo" class="form-control" placeholder="Titulo" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>YouTube ID</label>
+                                        <input type="text" name="youtube" class="form-control" placeholder="Titulo" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Vimeo ID</label>
+                                        <input type="text" name="vimeo" class="form-control" placeholder="Titulo" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group" id="data_1">
+                                        <label class="font-normal">Fecha Publicación</label>
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="fecha" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="contenido" class="summernote"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            <div class="col-md-12">
+                                <h3>Imagen</h3>
+                                <div class="alert alert-info alert-dismissable">
+                                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                    Detalles de la imagen a subir:<br>
+                                    -Formato: JPG,PNG<br>
+                                    -Dimensión: Imagen Normal: 500 x 400px<br>
+                                    -Tamaño: Hasta 2MB<br>
+                                    <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                                </div>
+                                <div class="html5fileupload fileNoticiasImg" data-form="true" data-max-filesize="2048000" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                    <input type="file" name="file_archivo" />
+                                </div>
+                                <script>
+                                    $(".html5fileupload.fileNoticiasImg").html5fileupload();
+                                </script>
+                            </div>
+                            <hr>
+                            <div class="col-md-12">
+                                <h3>Video</h3>
+                                <div class="alert alert-info alert-dismissable">
+                                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                    Detalles de la imagen a subir:<br>
+                                    -Formato: MP4<br>
+                                    -Dimensión: 480,720,1920
+                                    -Tamaño: Hasta 40MB<br>
+                                </div>
+                                <div class="html5fileupload fileNoticiasVideo" data-form="true" data-max-filesize="40960000" data-valid-extensions="mp4,MP4" style="width: 100%;">
+                                    <input type="file" name="file_video" />
+                                </div>
+                                <script>
+                                    $(".html5fileupload.fileNoticiasVideo").html5fileupload();
+                                </script>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar Noticia',
+            'content' => $modal
+        );
+        return $data;
     }
 
     public function modalEditarDTHerramienta($datos) {
@@ -1559,6 +1812,55 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarClientes($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'nombre' => utf8_decode($datos['nombre']),
+            'tipo' => utf8_decode($datos['tipo']),
+            'descripcion' => utf8_decode($datos['descripcion']),
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('clientes_items', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('clientes', 'clientes_items', $id),
+            'message' => 'Se han actualizado los datos del cliente "' . $datos['nombre'] . '"'
+        );
+        return $data;
+    }
+
+    public function frmEditarNoticias($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $fecha = $datos['fecha'];
+        $fecha = str_replace('/', '-', $fecha);
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+            'fecha' => date('Y-m-d', strtotime($fecha)),
+            'youtube' => utf8_decode($datos['youtube']),
+            'vimeo' => utf8_decode($datos['vimeo']),
+            'contenido' => utf8_decode($datos['contenido']),
+            'estado' => $estado
+        );
+        $this->db->update('multimedia_items', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('noticias', 'multimedia_items', $id),
+            'message' => 'Se ha actualizado el contenido de la noticia "' . $datos['titulo'] . '"'
+        );
+        return $data;
+    }
+
     public function frmEditarHerramienta($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -1736,6 +2038,56 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function uploadImgClientes($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('clientes_items', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/clientes/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('clientes', 'clientes_items', $id)
+        );
+        return $data;
+    }
+
+    public function uploadImgNoticias($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('multimedia_items', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/multimedia/imagenes/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('noticias', 'multimedia_items', $id)
+        );
+        return $data;
+    }
+
+    public function uploadVideoNoticias($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'archivo' => $datos['archivo']
+        );
+        $this->db->update('multimedia_items', $update, "id = $id");
+        $contenido = '<video controls>
+                                    <source src="' . URL . 'public/multimedia/videos/' . $datos['archivo'] . '" type="video/mp4">
+                                </video>';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('noticias', 'multimedia_items', $id)
+        );
+        return $data;
+    }
+
     public function uploadImgHerramienta($datos) {
         $id = $datos['id'];
         $update = array(
@@ -1771,10 +2123,37 @@ class Admin_Model extends Model {
      */
     public function unlinkImagen($campo, $tabla, $id, $carpeta) {
         $sql = $this->db->select("select $campo from $tabla where id = $id");
-        $dir = 'public/images/$carpeta/';
+        $dir = 'public/images/' . $carpeta . '/';
         if (!empty($sql)) {
             if (file_exists($dir . $sql[0][$campo])) {
                 unlink($dir . $sql[0][$campo]);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param string $campo
+     * @param string $tabla
+     * @param int $id
+     * @param string $carpeta
+     */
+    public function unlinkImagenMultimedia($campo, $tabla, $id, $carpeta) {
+        $sql = $this->db->select("select $campo from $tabla where id = $id");
+        $dir = 'public/multimedia/' . $carpeta . '/';
+        if (!empty($sql)) {
+            if (file_exists($dir . $sql[0][$campo])) {
+                unlink($dir . $sql[0][$campo]);
+            }
+        }
+    }
+
+    public function unlinkVideoMultimedia($id) {
+        $sql = $this->db->select("select archivo from multimedia_items where id = $id");
+        $dir = 'public/multimedia/videos/';
+        if (!empty($sql)) {
+            if (file_exists($dir . $sql[0]['archivo'])) {
+                unlink($dir . $sql[0]['archivo']);
             }
         }
     }
@@ -1827,6 +2206,19 @@ class Admin_Model extends Model {
         $data = array(
             'type' => 'success',
             'mensaje' => 'Se han actualizado el contenido de Directores.'
+        );
+        return $data;
+    }
+    
+    public function frmEditarContenidoClientes($datos) {
+        $id = 1;
+        $update = array(
+            'titulo' => utf8_decode($datos['titulo']),
+        );
+        $this->db->update('clientes', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'mensaje' => 'Se han actualizado el contenido de Clientes.'
         );
         return $data;
     }
@@ -2333,6 +2725,88 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function modalAgregarCliente() {
+        $tipos = $this->helper->getEnumOptions('clientes_items', 'tipo');
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Agregar Cliente</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" action="' . URL . '/admin/frmAgregarCliente" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1"> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nombre</label>
+                                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tipo</label>
+                                        <select class="form-control m-b" name="tipo" required> 
+                                            <option value="">Seleccione un Rol</option>';
+        foreach ($tipos as $item) {
+            $modal .= '                     <option value="' . $item . '">' . $item . '</option>';
+        }
+        $modal .= '                     </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Contenido</label>
+                                        <textarea name="descripcion" class="summernote"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Imagen</h3>
+                                    <div class="alert alert-info alert-dismissable">
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        Detalles de la imagen a subir:<br>
+                                        -Formato: JPG,PNG<br>
+                                        -Dimensión: Imagen Normal: 500 x 400px<br>
+                                        -Tamaño: Hasta 2MB<br>
+                                        <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                                    </div>
+                                    <div class="html5fileupload fileAgregarCliente" data-form="true" data-max-filesize="2048000"  data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                        <input type="file" name="file_archivo" />
+                                    </div>
+                                    <script>
+                                        $(".html5fileupload.fileAgregarCliente").html5fileupload();
+                                    </script>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-block btn-primary btn-lg">Agregar Cliente</button>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Agregar Integrante al Equipo',
+            'content' => $modal
+        );
+        return $data;
+    }
+
     public function modalAgregarHerramienta() {
         $modal = '<div class="box box-primary">
                     <div class="box-header with-border">
@@ -2573,6 +3047,33 @@ class Admin_Model extends Model {
         $id = $this->db->lastInsertId();
         return $id;
     }
+    
+    public function frmAgregarCliente($datos) {
+        $this->db->insert('clientes_items', array(
+            'nombre' => utf8_decode($datos['nombre']),
+            'tipo' => utf8_decode($datos['tipo']),
+            'descripcion' => utf8_decode($datos['descripcion']),
+            'orden' => $datos['orden'],
+            'estado' => $datos['estado']
+        ));
+        $id = $this->db->lastInsertId();
+        return $id;
+    }
+
+    public function frmAgregarNoticia($datos) {
+        $fecha = $datos['fecha'];
+        $fecha = str_replace('/', '-', $fecha);
+        $this->db->insert('multimedia_items', array(
+            'titulo' => utf8_decode($datos['titulo']),
+            'youtube' => utf8_decode($datos['youtube']),
+            'vimeo' => utf8_decode($datos['vimeo']),
+            'fecha' => date('Y-m-d', strtotime($fecha)),
+            'contenido' => $datos['contenido'],
+            'estado' => $datos['estado']
+        ));
+        $id = $this->db->lastInsertId();
+        return $id;
+    }
 
     public function frmAgregarHerramienta($datos) {
         $this->db->insert('herramientas_items', array(
@@ -2639,6 +3140,30 @@ class Admin_Model extends Model {
             'imagen' => $imagenes['imagenes']
         );
         $this->db->update('equipo_integrantes', $update, "id = $id");
+    }
+  
+    public function frmAddClienteImg($imagenes) {
+        $id = $imagenes['id'];
+        $update = array(
+            'imagen' => $imagenes['imagenes']
+        );
+        $this->db->update('clientes_items', $update, "id = $id");
+    }
+
+    public function frmAddMultimediaImg($imagenes) {
+        $id = $imagenes['id'];
+        $update = array(
+            'imagen' => $imagenes['imagenes']
+        );
+        $this->db->update('multimedia_items', $update, "id = $id");
+    }
+
+    public function frmAddMultimediaVideo($video) {
+        $id = $video['id'];
+        $update = array(
+            'archivo' => $video['archivo']
+        );
+        $this->db->update('multimedia_items', $update, "id = $id");
     }
 
     public function frmAddHerramientaImg($imagenes) {

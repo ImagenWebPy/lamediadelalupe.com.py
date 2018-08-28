@@ -6,6 +6,7 @@ class Login extends Controller {
         parent::__construct();
         //echo Hash::create('sha256', '2543asdaul.chucky', HASH_PASSWORD_KEY);
         //echo $this->helper->encrypt('Asasas)&RC','e');
+        echo $this->helper->encrypt('4ec^]rYf4Rv=7y@k','e');
     }
 
     public function index() {

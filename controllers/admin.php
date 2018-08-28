@@ -96,7 +96,7 @@ class Admin extends Controller {
             unset($_SESSION['message']);
     }
 
-    public function Equipo() {
+    public function equipo() {
         $this->view->helper = $this->helper;
         $this->view->title = 'Equipo';
 
@@ -112,15 +112,31 @@ class Admin extends Controller {
             unset($_SESSION['message']);
     }
     
+    public function clientes() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Clientes';
+
+        $this->view->datosContenido = $this->model->datosContenido('clientes');
+
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/clientes/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
+
     public function noticias() {
         $this->view->helper = $this->helper;
         $this->view->title = 'Noticias';
 
         $this->view->datosContenido = $this->model->datosContenido('multimedia');
 
-        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css", "css/plugins/datapicker/datepicker3.css");
         $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
-        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js", "js/plugins/datapicker/bootstrap-datepicker.js");
         $this->view->render('admin/header');
         $this->view->render('admin/noticias/index');
         $this->view->render('admin/footer');
@@ -185,7 +201,13 @@ class Admin extends Controller {
         $data = $this->model->listadoDTEquipo();
         echo $data;
     }
-    
+
+    public function listadoDTClientes() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTClientes();
+        echo $data;
+    }
+
     public function listadoDTNoticias() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTNoticias();
@@ -285,7 +307,16 @@ class Admin extends Controller {
         $datos = $this->model->modalEditarDTEquipo($data);
         echo $datos;
     }
-    
+
+    public function modalEditarDTClientes() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTClientes($data);
+        echo $datos;
+    }
+
     public function modalEditarDTNoticias() {
         header('Content-type: application/json; charset=utf-8');
         $data = array(
@@ -403,6 +434,35 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarEquipo($datos);
+        echo json_encode($data);
+    }
+   
+    public function frmEditarClientes() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'nombre' => (!empty($_POST['nombre'])) ? $this->helper->cleanInput($_POST['nombre']) : NULL,
+            'tipo' => (!empty($_POST['tipo'])) ? $this->helper->cleanInput($_POST['tipo']) : NULL,
+            'descripcion' => (!empty($_POST['descripcion'])) ? $_POST['descripcion'] : NULL,
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarClientes($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarNoticias() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+            'fecha' => (!empty($_POST['fecha'])) ? $this->helper->cleanInput($_POST['fecha']) : NULL,
+            'youtube' => (!empty($_POST['youtube'])) ? $this->helper->cleanInput($_POST['youtube']) : NULL,
+            'vimeo' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['vimeo']) : NULL,
+            'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarNoticias($datos);
         echo json_encode($data);
     }
 
@@ -688,6 +748,104 @@ class Admin extends Controller {
             echo json_encode($response);
         }
     }
+    
+    public function uploadImgClientes() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkImagen('imagen', 'clientes_items', $idPost, 'clientes');
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/clientes/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            #REDIMENSIONAR
+            $imagen = $serverdir . $filename;
+            $imagen_final = $filename;
+            $ancho = 500;
+            $alto = 400;
+            $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+            #############
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgClientes($data);
+            echo json_encode($response);
+        }
+    }
+
+    public function uploadImgNoticias() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkImagenMultimedia('imagen', 'multimedia_items', $idPost, 'imagenes');
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/multimedia/imagenes/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            #REDIMENSIONAR
+            $imagen = $serverdir . $filename;
+            $imagen_final = $filename;
+            $ancho = 380;
+            $alto = 573;
+            $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+            #############
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgNoticias($data);
+            echo json_encode($response);
+        }
+    }
+
+    public function uploadVideoNoticias() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkVideoMultimedia($idPost);
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/multimedia/videos/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'archivo' => $filename
+            );
+            $response = $this->model->uploadVideoNoticias($data);
+            echo json_encode($response);
+        }
+    }
 
     public function uploadImgHerramienta() {
         if (!empty($_POST)) {
@@ -759,6 +917,15 @@ class Admin extends Controller {
         echo json_encode($datos);
     }
 
+    public function frmEditarContenidoClientes() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+        );
+        $datos = $this->model->frmEditarContenidoClientes($data);
+        echo json_encode($datos);
+    }
+
     public function frmEditarContenidoHerramientas() {
         header('Content-type: application/json; charset=utf-8');
         $data = array(
@@ -776,7 +943,7 @@ class Admin extends Controller {
         $datos = $this->model->frmEditarContenidoEquipo($data);
         echo json_encode($datos);
     }
-   
+
     public function frmEditarContenidoNoticias() {
         header('Content-type: application/json; charset=utf-8');
         $data = array(
@@ -843,6 +1010,18 @@ class Admin extends Controller {
     public function modalAgregarEquipo() {
         header('Content-type: application/json; charset=utf-8');
         $datos = $this->model->modalAgregarEquipo();
+        echo json_encode($datos);
+    }
+ 
+    public function modalAgregarCliente() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = $this->model->modalAgregarCliente();
+        echo json_encode($datos);
+    }
+
+    public function modalAgregarNoticias() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = $this->model->modalAgregarNoticias();
         echo json_encode($datos);
     }
 
@@ -1184,6 +1363,122 @@ class Admin extends Controller {
             ));
         }
         header('Location:' . URL . 'admin/equipo/');
+    }
+    
+    public function frmAgregarCliente() {
+        if (!empty($_POST)) {
+            $data = array(
+                'nombre' => (!empty($_POST['nombre'])) ? $this->helper->cleanInput($_POST['nombre']) : NULL,
+                'tipo' => (!empty($_POST['tipo'])) ? $this->helper->cleanInput($_POST['tipo']) : NULL,
+                'descripcion' => (!empty($_POST['descripcion'])) ? $_POST['descripcion'] : NULL,
+                'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+                'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+            );
+            $idPost = $this->model->frmAgregarCliente($data);
+            #IMAGENES
+            if (!empty($_FILES['file_archivo']['name'])) {
+                $error = false;
+                $dir = 'public/images/clientes/';
+                $serverdir = $dir;
+                #IMAGENES
+                $newname = $idPost . '_' . $_FILES['file_archivo']['name'];
+                $fname = $this->helper->cleanUrl($newname);
+                $contents = file_get_contents($_FILES['file_archivo']['tmp_name']);
+
+                $handle = fopen($serverdir . $fname, 'w');
+                fwrite($handle, $contents);
+                fclose($handle);
+                #############
+                #SE REDIMENSIONA LA IMAGEN
+                #############
+                # ruta de la imagen a redimensionar 
+                $imagen = $serverdir . $fname;
+                # ruta de la imagen final, si se pone el mismo nombre que la imagen, esta se sobreescribe 
+                $imagen_final = $fname;
+                $ancho = 500;
+                $alto = 400;
+                $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+                #############
+                $imagenes = array(
+                    'id' => $idPost,
+                    'imagenes' => $fname
+                );
+                $this->model->frmAddClienteImg($imagenes);
+            }
+            Session::set('message', array(
+                'type' => 'success',
+                'mensaje' => 'Se ha agregado correctamente el cliente'
+            ));
+        }
+        header('Location:' . URL . 'admin/clientes/');
+    }
+
+    public function frmAgregarNoticia() {
+        if (!empty($_POST)) {
+            $data = array(
+                'titulo' => (!empty($_POST['titulo'])) ? $this->helper->cleanInput($_POST['titulo']) : NULL,
+                'youtube' => (!empty($_POST['youtube'])) ? $this->helper->cleanInput($_POST['youtube']) : NULL,
+                'vimeo' => (!empty($_POST['vimeo'])) ? $this->helper->cleanInput($_POST['vimeo']) : NULL,
+                'fecha' => (!empty($_POST['fecha'])) ? $this->helper->cleanInput($_POST['fecha']) : NULL,
+                'contenido' => (!empty($_POST['contenido'])) ? $_POST['contenido'] : NULL,
+                'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+            );
+            $idPost = $this->model->frmAgregarNoticia($data);
+            #IMAGENES
+            if (!empty($_FILES['file_archivo']['name'])) {
+                $error = false;
+                $dir = 'public/multimedia/imagenes/';
+                $serverdir = $dir;
+                #IMAGENES
+                $newname = $idPost . '_' . $_FILES['file_archivo']['name'];
+                $fname = $this->helper->cleanUrl($newname);
+                $contents = file_get_contents($_FILES['file_archivo']['tmp_name']);
+
+                $handle = fopen($serverdir . $fname, 'w');
+                fwrite($handle, $contents);
+                fclose($handle);
+                #############
+                #SE REDIMENSIONA LA IMAGEN
+                #############
+                # ruta de la imagen a redimensionar 
+                $imagen = $serverdir . $fname;
+                # ruta de la imagen final, si se pone el mismo nombre que la imagen, esta se sobreescribe 
+                $imagen_final = $fname;
+                $ancho = 380;
+                $alto = 573;
+                $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+                #############
+                $imagenes = array(
+                    'id' => $idPost,
+                    'imagenes' => $fname
+                );
+                $this->model->frmAddMultimediaImg($imagenes);
+            }
+            #VIDEOS
+            if (!empty($_FILES['file_video']['name'])) {
+                $error = false;
+                $dir = 'public/multimedia/videos/';
+                $serverdir = $dir;
+                #IMAGENES
+                $newname = $idPost . '_' . $_FILES['file_video']['name'];
+                $fname = $this->helper->cleanUrl($newname);
+                $contents = file_get_contents($_FILES['file_video']['tmp_name']);
+
+                $handle = fopen($serverdir . $fname, 'w');
+                fwrite($handle, $contents);
+                fclose($handle);
+                $video = array(
+                    'id' => $idPost,
+                    'archivo' => $fname
+                );
+                $this->model->frmAddMultimediaVideo($video);
+            }
+            Session::set('message', array(
+                'type' => 'success',
+                'mensaje' => 'Se ha agregado correctamente la Noticia'
+            ));
+        }
+        header('Location:' . URL . 'admin/noticias/');
     }
 
     public function frmAgregarHerramienta() {

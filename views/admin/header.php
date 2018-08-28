@@ -72,7 +72,7 @@ $rol = $_SESSION['usuarioLogueado']['rol'];
                             <li><a href="<?= URL; ?>admin/valores"><i class="fa fa-star"></i> <span class="nav-label">Valores</span></a></li>
                             <li><a href="<?= URL; ?>admin/servicios"><i class="fa fa-star"></i> <span class="nav-label">Servicios</span></a></li>
                             <li><a href="<?= URL; ?>admin/herramientas"><i class="fa fa-bus"></i> <span class="nav-label">Herramientas</span></a></li>
-                            <li><a href="<?= URL; ?>admin/nuestros_clientes"><i class="fa fa-map-o"></i> <span class="nav-label">Nuestros Clientes</span></a></li>
+                            <li><a href="<?= URL; ?>admin/clientes"><i class="fa fa-map-o"></i> <span class="nav-label">Nuestros Clientes</span></a></li>
                             <li><a href="<?= URL; ?>admin/noticias"><i class="fa fa-line-chart"></i> <span class="nav-label">Noticias</span></a></li>
                             <li><a href="<?= URL; ?>admin/contacto"><i class="fa fa-envelope-o"></i> <span class="nav-label">Contacto</span></a></li>
                             <li><a href="<?= URL; ?>admin/equipo"><i class="fa fa-users"></i> <span class="nav-label">Equipo</span></a></li>
