@@ -47,6 +47,20 @@ class Admin_Model extends Model {
                 break;
         }
         switch ($seccion) {
+            case 'verContacto':
+                if ($sql[0]['leido'] == 1) {
+                    $estado = '<span class="label label-primary">Leído</span>';
+                } else {
+                    $estado = '<span class="label label-danger">No Leído</span>';
+                }
+                $btnEditar = '<a class="btnVerContacto pointer btn-xs" data-id="' . $id . '" data-url="modalVerContacto"><i class="fa fa-edit"></i> Ver Datos </a>';
+                $data = '<td class="sorting_1">' . $id . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['nombre']) . '</td>'
+                        . '<td>' . utf8_encode($sql[0]['email']) . '</td>'
+                        . '<td>' . date('d-m-Y H:i:s', strtotime($sql[0]['nombre'])) . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'slider':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="slider" data-rowid="slider_" data-tabla="inicio_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -186,6 +200,23 @@ class Admin_Model extends Model {
                         . '<td>' . $estado . '</td>'
                         . '<td>' . $btnEditar . '</td>';
                 break;
+            case 'contacto_img':
+                if ($sql[0]['estado'] == 1) {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="contacto_img" data-rowid="contactoImg_" data-tabla="contacto_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+                } else {
+                    $estado = '<a class="pointer btnCambiarEstado" data-seccion="contacto_img" data-rowid="contactoImg_" data-tabla="contacto_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+                }
+                $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTContactoImg"><i class="fa fa-edit"></i> Editar </a>';
+                if (!empty($sql[0]['imagen'])) {
+                    $img = '<img src="' . URL . 'public/images/background-contacto/' . $sql[0]['imagen'] . '" style="width: 160px;">';
+                } else {
+                    $img = '-';
+                }
+                $data = '<td>' . $sql[0]['orden'] . '</td>'
+                        . '<td>' . $img . '</td>'
+                        . '<td>' . $estado . '</td>'
+                        . '<td>' . $btnEditar . '</td>';
+                break;
             case 'herramientas_img':
                 if ($sql[0]['estado'] == 1) {
                     $estado = '<a class="pointer btnCambiarEstado" data-seccion="herramientas_img" data-rowid="herramientasImg_" data-tabla="herramientas_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
@@ -308,6 +339,34 @@ class Admin_Model extends Model {
             }
             array_push($datos, array(
                 "DT_RowId" => "quienesSomos_$id",
+                'orden' => $item['orden'],
+                'imagen' => $img,
+                'estado' => $estado,
+                'editar' => $btnEditar
+            ));
+        }
+        $json = '{"data": ' . json_encode($datos) . '}';
+        return $json;
+    }
+
+    public function listadoDTImgContacto() {
+        $sql = $this->db->select("SELECT * FROM contacto_imagenes ORDER BY orden ASC;");
+        $datos = array();
+        foreach ($sql as $item) {
+            $id = $item['id'];
+            if ($item['estado'] == 1) {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="contacto_img" data-rowid="contactoImg_" data-tabla="contacto_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="1"><span class="label label-primary">Activo</span></a>';
+            } else {
+                $estado = '<a class="pointer btnCambiarEstado" data-seccion="contacto_img" data-rowid="contactoImg_" data-tabla="contacto_imagenes" data-campo="estado" data-id="' . $id . '" data-estado="0"><span class="label label-danger">Inactivo</span></a>';
+            }
+            $btnEditar = '<a class="editDTContenido pointer btn-xs" data-id="' . $id . '" data-url="modalEditarDTContactoImg"><i class="fa fa-edit"></i> Editar </a>';
+            if (!empty($item['imagen'])) {
+                $img = '<img src="' . URL . 'public/images/background-contacto/' . $item['imagen'] . '" style="width: 160px;">';
+            } else {
+                $img = '-';
+            }
+            array_push($datos, array(
+                "DT_RowId" => "contactoImg_$id",
                 'orden' => $item['orden'],
                 'imagen' => $img,
                 'estado' => $estado,
@@ -696,6 +755,80 @@ class Admin_Model extends Model {
                         <div class="col-md-12" id="imgQuienesSomos' . $id . '">';
         if (!empty($sql[0]['imagen'])) {
             $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/background-quienes_somos/' . $sql[0]['imagen'] . '">';
+        }
+        $modal .= '     </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $(".i-checks").iCheck({
+                            checkboxClass: "icheckbox_square-green",
+                            radioClass: "iradio_square-green",
+                        });
+                    });
+                </script>';
+        $data = array(
+            'titulo' => 'Editar Imagen de Fondo - Quienes Somos',
+            'content' => $modal
+        );
+        return json_encode($data);
+    }
+
+    public function modalEditarDTContactoImg($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("select * from contacto_imagenes where id = $id");
+        $checked = ($sql[0]['estado'] == 1) ? 'checked' : '';
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Modificar Datos Imagen de Fondo</h3>
+                    </div>
+                    <div class="row">
+                        <form role="form" id="frmEditarContactoImg" method="POST">
+                            <input type="hidden" name="id" value="' . $id . '">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Orden</label>
+                                        <input type="text" name="orden" class="form-control" placeholder="Orden" value="' . utf8_encode($sql[0]['orden']) . '">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="i-checks"><label> <input type="checkbox" name="estado" value="1" ' . $checked . '> <i></i> Mostrar </label></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg">Editar Contenido</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col-md-12">
+                            <h3>Imagen</h3>
+                            <div class="alert alert-info alert-dismissable">
+                                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                Detalles de la imagen a subir:<br>
+                                -Formato: JPG,PNG<br>
+                                -Dimensión: Imagen Normal: 1920 x 1200px<br>
+                                -Tamaño: Hasta 2MB<br>
+                                <strong>Obs.: Las imagenes serán redimensionadas automaticamente a la dimensión especificada y se reducirá la calidad de la misma.</strong>
+                            </div>
+                            <div class="html5fileupload fileContactoImg" data-max-filesize="2048000" data-url="' . URL . 'admin/uploadImgContactoImg" data-valid-extensions="JPG,JPEG,jpg,png,jpeg,PNG" style="width: 100%;">
+                                <input type="file" name="file_archivo" />
+                            </div>
+                            <script>
+                                $(".html5fileupload.fileContactoImg").html5fileupload({
+                                    data: {id: ' . $id . '},
+                                    onAfterStartSuccess: function (response) {
+                                        $("#imgContactoImg" + response.id).html(response.content);
+                                        $("#contactoImg_" + response.id).html(response.row);
+                                    }
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-12" id="imgContactoImg' . $id . '">';
+        if (!empty($sql[0]['imagen'])) {
+            $modal .= '     <img class="img-responsive" src="' . URL . 'public/images/background-contacto/' . $sql[0]['imagen'] . '">';
         }
         $modal .= '     </div>
                     </div>
@@ -1717,6 +1850,26 @@ class Admin_Model extends Model {
         return $data;
     }
 
+    public function frmEditarContactoImg($datos) {
+        $id = $datos['id'];
+        $estado = 1;
+        if (empty($datos['estado'])) {
+            $estado = 0;
+        }
+        $update = array(
+            'orden' => $datos['orden'],
+            'estado' => $estado
+        );
+        $this->db->update('contacto_imagenes', $update, "id = $id");
+        $data = array(
+            'type' => 'success',
+            'id' => $id,
+            'content' => $this->rowDataTable('contacto_img', 'contacto_imagenes', $id),
+            'message' => 'Se ha actualizado el contenido de la imagen'
+        );
+        return $data;
+    }
+
     public function frmEditarHerramientasImg($datos) {
         $id = $datos['id'];
         $estado = 1;
@@ -1966,6 +2119,22 @@ class Admin_Model extends Model {
             'id' => $id,
             'content' => $contenido,
             'row' => $this->rowDataTable('quienes_somos', 'quienes_somos_imagenes', $id)
+        );
+        return $data;
+    }
+
+    public function uploadImgContactoImg($datos) {
+        $id = $datos['id'];
+        $update = array(
+            'imagen' => $datos['imagen']
+        );
+        $this->db->update('contacto_imagenes', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/background-contacto/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'id' => $id,
+            'content' => $contenido,
+            'row' => $this->rowDataTable('contacto_img', 'contacto_imagenes', $id)
         );
         return $data;
     }
@@ -3721,6 +3890,141 @@ class Admin_Model extends Model {
             'id' => $id
         );
         return $data;
+    }
+
+    public function frmEditarDatosContacto($datos) {
+        $update = array(
+            'telefono' => utf8_decode($datos['telefono']),
+            'direccion' => utf8_decode($datos['direccion']),
+            'ciudad' => utf8_decode($datos['ciudad']),
+            'email' => utf8_decode($datos['email']),
+            'web' => utf8_decode($datos['web']),
+            'titulo_contacto' => utf8_decode($datos['titulo_contacto']),
+            'subtitulo_contacto' => utf8_decode($datos['subtitulo_contacto']),
+        );
+        $this->db->update('datos_contacto', $update, "id = 1");
+        $data = array(
+            'type' => 'success',
+            'content' => 'Se ha actualizado el contenido de datos de Contacto'
+        );
+        return $data;
+    }
+
+    public function frmEditarDatosMapa($datos) {
+        $update = array(
+            'longitud' => utf8_decode($datos['longitud']),
+            'latitud' => utf8_decode($datos['latitud']),
+            'zoom' => utf8_decode($datos['zoom']),
+            'texto_marcador' => utf8_decode($datos['texto_marcador'])
+        );
+        $this->db->update('datos_contacto', $update, "id = 1");
+        $data = array(
+            'type' => 'success',
+            'content' => 'Se ha actualizado los datos del mapa'
+        );
+        return $data;
+    }
+
+    public function listadoDTContacto($datos) {
+        $columns = array(
+            0 => 'id',
+            1 => 'nombre',
+            2 => 'email',
+            3 => 'fecha',
+            4 => 'visto',
+            5 => 'accion'
+        );
+#getting total number records without any search
+        $sql = $this->db->select("SELECT COUNT(*) as cantidad FROM frm_contacto");
+        $totalFiltered = $sql[0]['cantidad'];
+        $totalData = $sql[0]['cantidad'];
+
+        $query = "SELECT * FROM frm_contacto where 1 = 1";
+        $where = "";
+        if (!empty($datos['search']['value'])) {
+            $where .= " AND (nombre LIKE '%" . $requestData['search']['value'] . "%' ";
+            $where .= " OR email LIKE '%" . $requestData['search']['value'] . "%' ";
+            $where .= " OR fecha LIKE '%" . $requestData['search']['value'] . "%' )";
+#when there is a search parameter then we have to modify total number filtered rows as per search result.
+            $sql = $this->db->select("SELECT COUNT(*) as cantidad FROM frm_contacto where 1 = 1 $where");
+            $totalFiltered = $sql[0]['cantidad'];
+        }
+        $query .= $where;
+        $query .= " ORDER BY " . $columns[$datos['order'][0]['column']] . "   " . $datos['order'][0]['dir'] . "  LIMIT " . $datos['start'] . " ," . $datos['length'] . "   ";
+        $sql = $this->db->select($query);
+        $data = array();
+        foreach ($sql as $row) {  // preparing an array
+            $id = $row["id"];
+            if ($row['leido'] == 1) {
+                $estado = '<span class="label label-primary">Leído</span>';
+            } else {
+                $estado = '<span class="label label-danger">No Leído</span>';
+            }
+            $btnEditar = '<a class="btnVerContacto pointer btn-xs" data-id="' . $id . '" data-url="modalVerContacto"><i class="fa fa-edit"></i> Ver Datos </a>';
+            $nestedData = array();
+            $nestedData['DT_RowId'] = 'contacto_' . $id;
+            $nestedData[] = $id;
+            $nestedData[] = utf8_encode($row["nombre"]);
+            $nestedData[] = utf8_encode($row["email"]);
+            $nestedData[] = date('d-m-Y H:i:s', strtotime($row["fecha"]));
+            $nestedData[] = $estado;
+            $nestedData[] = $btnEditar;
+            $data[] = $nestedData;
+        }
+
+        $json_data = array(
+            "draw" => intval($datos['draw']), // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+            "recordsTotal" => intval($totalData), // total number of records
+            "recordsFiltered" => intval($totalFiltered), // total number of records after searching, if there is no searching then totalFiltered = totalData
+            "data" => $data   // total data array
+        );
+
+        return json_encode($json_data);
+    }
+
+    public function modalVerContacto($datos) {
+        $id = $datos['id'];
+        $sql = $this->db->select("SELECT * FROM frm_contacto where id = $id");
+        $modal = '<div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Formulario de contacto enviado por ' . utf8_encode($sql[0]['nombre']) . '</h3>
+                    </div>
+                    <div class="row">
+                        <table class="table table-hover">
+                            <tr>
+                                <td class="text-bold">Nombre:</td>
+                                <td>' . utf8_encode($sql[0]['nombre']) . '</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Email:</td>
+                                <td>' . utf8_encode($sql[0]['email']) . '</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Mensaje:</td>
+                                <td>' . utf8_encode($sql[0]['mensaje']) . '</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">IP:</td>
+                                <td>' . utf8_encode($sql[0]['ip']) . '</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Fecha:</td>
+                                <td>' . date('d-m-Y H:i:s', strtotime($sql[0]['fecha'])) . '</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>';
+        $update = array(
+            'leido' => 1
+        );
+        $this->db->update('frm_contacto', $update, "id = $id");
+        $data = array(
+            'titulo' => 'Ver datos de contacto',
+            'content' => $modal,
+            'id' => $id,
+            'row' => $this->rowDataTable('verContacto', 'frm_contacto', $id)
+        );
+        return json_encode($data);
     }
 
 }

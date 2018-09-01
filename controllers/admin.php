@@ -128,6 +128,22 @@ class Admin extends Controller {
             unset($_SESSION['message']);
     }
 
+    public function contacto() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Clientes';
+
+        $this->view->datosContacto = $this->model->datosContenido('datos_contacto');
+
+        $this->view->public_css = array("css/plugins/dataTables/datatables.min.css", "css/plugins/html5fileupload/html5fileupload.css", "css/plugins/toastr/toastr.min.css", "css/plugins/iCheck/custom.css", "css/plugins/summernote/summernote.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->public_js = array("js/plugins/dataTables/datatables.min.js", "js/plugins/toastr/toastr.min.js", "js/plugins/summernote/summernote.min.js", "js/plugins/iCheck/icheck.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/contacto/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
+
     public function noticias() {
         $this->view->helper = $this->helper;
         $this->view->title = 'Noticias';
@@ -209,6 +225,12 @@ class Admin extends Controller {
     public function listadoDTQuienesSomos() {
         header('Content-type: application/json; charset=utf-8');
         $data = $this->model->listadoDTQuienesSomos();
+        echo $data;
+    }
+
+    public function listadoDTImgContacto() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTImgContacto();
         echo $data;
     }
 
@@ -300,6 +322,15 @@ class Admin extends Controller {
             'id' => $this->helper->cleanInput($_POST['id'])
         );
         $datos = $this->model->modalEditarDTQuienesSomos($data);
+        echo $datos;
+    }
+
+    public function modalEditarDTContactoImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalEditarDTContactoImg($data);
         echo $datos;
     }
 
@@ -412,6 +443,17 @@ class Admin extends Controller {
             'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
         );
         $data = $this->model->frmEditarQuienesSomos($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarContactoImg() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'id' => $this->helper->cleanInput($_POST['id']),
+            'orden' => (!empty($_POST['orden'])) ? $this->helper->cleanInput($_POST['orden']) : NULL,
+            'estado' => (!empty($_POST['estado'])) ? $this->helper->cleanInput($_POST['estado']) : 0,
+        );
+        $data = $this->model->frmEditarContactoImg($datos);
         echo json_encode($data);
     }
 
@@ -610,6 +652,41 @@ class Admin extends Controller {
                 'imagen' => $filename
             );
             $response = $this->model->uploadImgQuienesSomos($data);
+            echo json_encode($response);
+        }
+    }
+    
+    public function uploadImgContactoImg() {
+        if (!empty($_POST)) {
+            $idPost = $_POST['data']['id'];
+            $this->model->unlinkImagen('imagen', 'contacto_imagenes', $idPost, 'background-contacto');
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/background-contacto/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($idPost . '_' . $name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+            #REDIMENSIONAR
+            $imagen = $serverdir . $filename;
+            $imagen_final = $filename;
+            $ancho = 1920;
+            $alto = 1200;
+            $this->helper->redimensionar($imagen, $imagen_final, $ancho, $alto, $serverdir);
+            #############
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'id' => $idPost,
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgContactoImg($data);
             echo json_encode($response);
         }
     }
@@ -1713,6 +1790,47 @@ class Admin extends Controller {
         $data = $this->model->frmEditarMenu($datos);
         echo json_encode($data);
     }
-    
-    
+
+    public function frmEditarDatosContacto() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'telefono' => (!empty($_POST['telefono'])) ? $this->helper->cleanInput($_POST['telefono']) : NULL,
+            'direccion' => (!empty($_POST['direccion'])) ? $this->helper->cleanInput($_POST['direccion']) : NULL,
+            'ciudad' => (!empty($_POST['ciudad'])) ? $this->helper->cleanInput($_POST['ciudad']) : NULL,
+            'email' => (!empty($_POST['email'])) ? $this->helper->cleanInput($_POST['email']) : NULL,
+            'web' => (!empty($_POST['web'])) ? $this->helper->cleanInput($_POST['web']) : NULL,
+            'titulo_contacto' => (!empty($_POST['titulo_contacto'])) ? $this->helper->cleanInput($_POST['titulo_contacto']) : NULL,
+            'subtitulo_contacto' => (!empty($_POST['subtitulo_contacto'])) ? $this->helper->cleanInput($_POST['subtitulo_contacto']) : NULL,
+        );
+        $data = $this->model->frmEditarDatosContacto($datos);
+        echo json_encode($data);
+    }
+
+    public function frmEditarDatosMapa() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'longitud' => (!empty($_POST['longitud'])) ? $this->helper->cleanInput($_POST['longitud']) : NULL,
+            'latitud' => (!empty($_POST['latitud'])) ? $this->helper->cleanInput($_POST['latitud']) : NULL,
+            'zoom' => (!empty($_POST['zoom'])) ? $this->helper->cleanInput($_POST['zoom']) : NULL,
+            'texto_marcador' => (!empty($_POST['texto_marcador'])) ? $this->helper->cleanInput($_POST['texto_marcador']) : NULL
+        );
+        $data = $this->model->frmEditarDatosMapa($datos);
+        echo json_encode($data);
+    }
+
+    public function listadoDTContacto() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = $this->model->listadoDTContacto($_REQUEST);
+        echo $data;
+    }
+
+    public function modalVerContacto() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'id' => $this->helper->cleanInput($_POST['id'])
+        );
+        $datos = $this->model->modalVerContacto($data);
+        echo $datos;
+    }
+
 }
