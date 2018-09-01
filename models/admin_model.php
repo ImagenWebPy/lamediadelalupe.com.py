@@ -4027,4 +4027,147 @@ class Admin_Model extends Model {
         return json_encode($data);
     }
 
+    public function uploadImgLogo($datos) {
+        $id = 1;
+        $update = array(
+            'logo' => $datos['imagen']
+        );
+        $this->db->update('logos', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'content' => $contenido,
+        );
+        return $data;
+    }
+
+    public function uploadImgLogoBN($datos) {
+        $id = 1;
+        $update = array(
+            'logo_white' => $datos['imagen']
+        );
+        $this->db->update('logos', $update, "id = $id");
+        $contenido = '<img class="img-responsive" src="' . URL . 'public/images/' . $datos['imagen'] . '">';
+        $data = array(
+            "result" => true,
+            'content' => $contenido,
+        );
+        return $data;
+    }
+
+    public function unlinkLogoCabecera() {
+        $sql = $this->db->select("SELECT logo FROM `logos` WHERE id = 1;");
+        $dir = 'public/images/';
+        if (!empty($sql)) {
+            if (file_exists($dir . $sql[0]['logo'])) {
+                unlink($dir . $sql[0]['logo']);
+            }
+        }
+    }
+
+    public function unlinkLogo() {
+        $sql = $this->db->select("SELECT logo_white FROM `logos` WHERE id = 1;");
+        $dir = 'public/images/';
+        if (!empty($sql)) {
+            if (file_exists($dir . $sql[0]['logo_white'])) {
+                unlink($dir . $sql[0]['logo_white']);
+            }
+        }
+    }
+
+    public function rptVisitasPaginas($datos) {
+        require './util/Analytics.php';
+        $this->analytics = new Analytics();
+        $googleData = $this->analytics->getPageViews($this->analytics->analytics, $this->analytics->profile, $datos['fechaInicio'], $datos['fechaFin'], $datos['mostrar']);
+        $data = '
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Página</th>
+                            <th>Número de Visitas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ';
+        foreach ($googleData as $item) {
+            $data .= '  <tr>
+                            <td>' . $item[0] . '</td>
+                            <td class="text-center">' . number_format($item[1], 0, ',', '.') . '</td>
+                        </tr>';
+        }
+        $data .= '      
+                    </tbody>
+                </table>';
+        return $data;
+    }
+
+    public function rptCantidadVisitasDia($datos) {
+        require './util/Analytics.php';
+        $this->analytics = new Analytics();
+        $googleData = $this->analytics->getCantidadVisitasDia($this->analytics->analytics, $this->analytics->profile, $datos['fechaInicio'], $datos['fechaFin']);
+        $data = '<div id="morris-one-line-chart"></div>
+                <script type="">
+                    $(function() {
+                        var months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Dic"];
+                        Morris.Line({
+                            element: "morris-one-line-chart",
+                                data: [';
+        foreach ($googleData as $item) {
+            $data .= '                  { day: "' . date('Y-m-d H:i:s', strtotime($item[0])) . '", value: ' . $item[1] . ' },';
+        }
+        $data .= '                  ],
+                            xkey: "day",
+                            xlabels: "day",
+                            xLabelFormat: function (x) {
+                                var d = new Date(x.label.slice(0, 10) + "T" + x.label.slice(11, x.label.length));
+                                return d.getDate() + \' \' + months[d.getMonth()];
+                            },
+                            ykeys: ["value"],
+                            labels: ["Cantidad"],
+                            pointSize: 2,
+                            hideHover: "auto",
+                            lineColors: ["rgb(0, 188, 212)"],
+                            xLabelAngle: 50,
+                            behaveLikeLine: true,
+                            parseTime: false
+                        });
+                    });
+                </script>';
+        return $data;
+    }
+
+    public function rptUsuarios($datos) {
+        require './util/Analytics.php';
+        $this->analytics = new Analytics();
+        $googleData = $this->analytics->getUsuarios($this->analytics->analytics, $this->analytics->profile, $datos['fechaInicio'], $datos['fechaFin']);
+        $data = array(
+            'usuarios' => '<h3>' . number_format($googleData[0][0], 0, ',', '.') . '</h3>',
+            'usuariosNuevos' => '<h3>' . number_format($googleData[0][1], 0, ',', '.') . '</h3>',
+            'sesiones' => '<h3>' . number_format($googleData[0][2], 0, ',', '.') . '</h3>',
+        );
+        return $data;
+    }
+
+    public function rptDispositivos($datos) {
+        require './util/Analytics.php';
+        $this->analytics = new Analytics();
+        $googleData = $this->analytics->getDispositivos($this->analytics->analytics, $this->analytics->profile, $datos['fechaInicio'], $datos['fechaFin']);
+        $data = '<div class="row">
+                    <div class="col-xs-4"><h3><i class="fa fa-desktop" aria-hidden="true"></i> ' . number_format($googleData[0][1], 0, ',', '.') . '</h3></div>
+                    <div class="col-xs-4"><h3><i class="fa fa-mobile" aria-hidden="true"></i> ' . number_format($googleData[1][1], 0, ',', '.') . '</h3></div>
+                    <div class="col-xs-4"><h3><i class="fa fa-tablet" aria-hidden="true"></i> ' . number_format($googleData[2][1], 0, ',', '.') . '</h3></div>
+                </div>';
+        return $data;
+    }
+
+    public function rptPaginasSesion($datos) {
+        require './util/Analytics.php';
+        $this->analytics = new Analytics();
+        $googleData = $this->analytics->getPaginasSesion($this->analytics->analytics, $this->analytics->profile, $datos['fechaInicio'], $datos['fechaFin']);
+        $data = '<div class="row">
+                    <h3>' . number_format($googleData[0][0], 2, ',', '.') . '</h3>
+                </div>';
+        return $data;
+    }
+
 }

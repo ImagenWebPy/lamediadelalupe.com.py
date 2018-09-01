@@ -722,4 +722,9 @@ class Helper {
         return $data;
     }
 
+    public function getLogos() {
+        $sql = $this->db->select("select * from logos where id = 1");
+        return $sql[0];
+    }
+
 }

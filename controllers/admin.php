@@ -655,7 +655,7 @@ class Admin extends Controller {
             echo json_encode($response);
         }
     }
-    
+
     public function uploadImgContactoImg() {
         if (!empty($_POST)) {
             $idPost = $_POST['data']['id'];
@@ -1831,6 +1831,124 @@ class Admin extends Controller {
         );
         $datos = $this->model->modalVerContacto($data);
         echo $datos;
+    }
+
+    public function uploadImgLogo() {
+        if (!empty($_POST)) {
+            $this->model->unlinkLogoCabecera();
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgLogo($data);
+            echo json_encode($response);
+        }
+    }
+
+    public function uploadImgLogoBN() {
+        if (!empty($_POST)) {
+            $this->model->unlinkLogo();
+            $error = false;
+            $absolutedir = dirname(__FILE__);
+            $dir = 'public/images/';
+            $serverdir = $dir;
+            $tmp = explode(',', $_POST['file']);
+            $file = base64_decode($tmp[1]);
+            $ext = explode('.', $_POST['filename']);
+            $extension = strtolower(end($ext));
+            $name = $_POST['name'];
+            $filename = $this->helper->cleanUrl($name);
+            $filename = $filename . '.' . $extension;
+            $handle = fopen($serverdir . $filename, 'w');
+            fwrite($handle, $file);
+            fclose($handle);
+
+            header('Content-type: application/json; charset=utf-8');
+            $data = array(
+                'imagen' => $filename
+            );
+            $response = $this->model->uploadImgLogoBN($data);
+            echo json_encode($response);
+        }
+    }
+
+    public function logos() {
+        $this->view->helper = $this->helper;
+        $this->view->title = 'Logo';
+        $this->view->logos = $this->helper->getLogos();
+        $this->view->public_css = array("css/plugins/html5fileupload/html5fileupload.css");
+        $this->view->publicHeader_js = array("js/plugins/html5fileupload/html5fileupload.min.js");
+        $this->view->render('admin/header');
+        $this->view->render('admin/logo/index');
+        $this->view->render('admin/footer');
+        if (!empty($_SESSION['message']))
+            unset($_SESSION['message']);
+    }
+
+    public function rptVisitasPaginas() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'fechaInicio' => $this->helper->cleanInput($_POST['fechaInicio']),
+            'fechaFin' => $this->helper->cleanInput($_POST['fechaFin']),
+            'mostrar' => $_POST['mostrar']
+        );
+        $data = $this->model->rptVisitasPaginas($datos);
+        echo json_encode($data);
+    }
+
+    public function rptCantidadVisitasDia() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'fechaInicio' => $this->helper->cleanInput($_POST['fechaInicio']),
+            'fechaFin' => $this->helper->cleanInput($_POST['fechaFin'])
+        );
+        $data = $this->model->rptCantidadVisitasDia($datos);
+        echo json_encode($data);
+    }
+
+    public function rptUsuarios() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'fechaInicio' => $this->helper->cleanInput($_POST['fechaInicio']),
+            'fechaFin' => $this->helper->cleanInput($_POST['fechaFin'])
+        );
+        $data = $this->model->rptUsuarios($datos);
+        echo json_encode($data);
+    }
+
+    public function rptDispositivos() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'fechaInicio' => $this->helper->cleanInput($_POST['fechaInicio']),
+            'fechaFin' => $this->helper->cleanInput($_POST['fechaFin'])
+        );
+        $data = $this->model->rptDispositivos($datos);
+        echo json_encode($data);
+    }
+
+    public function rptPaginasSesion() {
+        header('Content-type: application/json; charset=utf-8');
+        $datos = array(
+            'fechaInicio' => $this->helper->cleanInput($_POST['fechaInicio']),
+            'fechaFin' => $this->helper->cleanInput($_POST['fechaFin'])
+        );
+        $data = $this->model->rptPaginasSesion($datos);
+        echo json_encode($data);
     }
 
 }
