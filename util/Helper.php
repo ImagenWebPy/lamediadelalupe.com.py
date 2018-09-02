@@ -365,8 +365,9 @@ class Helper {
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         $headers .= 'From: CADIEM Fondos <atc@cadiemfondos.com.py>' . "\r\n";
-        if (!empty($cc))
-            $headers .= 'Bcc:' . $emailAsesor . "\r\n";
+        if (!empty($cc)) {
+            $headers .= 'Bcc:' . $cc . "\r\n";
+        }
         $headers .= 'Reply-To: atc@cadiemfondos.com.py' . "\r\n";
         mail($para, $asunto, $mensaje, $headers);
     }

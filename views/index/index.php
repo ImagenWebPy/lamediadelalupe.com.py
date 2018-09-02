@@ -320,7 +320,7 @@ foreach ($this->mostrarMenu as $val) {
                                            </div>
                                            <div class="col-md-6">
                                            <div class="text-left scroll-in-animation" data-animation="fadeInRight">
-                                                <form class="ajax-form" data-message-class="colors-d background-95 heading border" method="post" novalidate="novalidate">
+                                               <form class="ajax-form" action="<?= URL; ?>clientes/contacto" data-message-class="colors-d background-95 heading border" method="post" novalidate="novalidate">
                                                     <div class="row">
                                                         <div class="col-md-6 control-group">
                                                             <div class="alt-placeholder">Nombre</div>
@@ -334,7 +334,7 @@ foreach ($this->mostrarMenu as $val) {
                                                         </div>
                                                         <div class="col-md-12 control-group">
                                                             <div class="alt-placeholder">Mensaje</div>
-                                                            <textarea name="Mensaje" placeholder="Mensaje" data-validation-required-message="Escribínos un mensaje" required></textarea>
+                                                            <textarea name="mensaje" placeholder="Mensaje" data-validation-required-message="Escribínos un mensaje" required></textarea>
                                                             <div class="help-block"></div>
                                                         </div>
                                                         <div class="col-md-12 form-actions">

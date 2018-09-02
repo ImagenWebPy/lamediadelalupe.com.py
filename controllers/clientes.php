@@ -14,4 +14,15 @@ class Clientes extends Controller {
         echo $data;
     }
 
+    public function contacto() {
+        header('Content-type: application/json; charset=utf-8');
+        $data = array(
+            'nombre' => (!empty($_POST['nombre'])) ? $this->helper->cleanInput($_POST['nombre']) : NULL,
+            'email' => (!empty($_POST['email'])) ? $this->helper->cleanInput($_POST['email']) : NULL,
+            'mensaje' => (!empty($_POST['mensaje'])) ? $this->helper->cleanInput($_POST['mensaje']) : NULL
+        );
+        $datos = $this->model->contacto($data);
+        echo json_encode($datos);
+    }
+
 }

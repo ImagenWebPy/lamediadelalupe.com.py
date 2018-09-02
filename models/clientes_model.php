@@ -34,4 +34,29 @@ class Clientes_Model extends Model {
         return $data;
     }
 
+    public function contacto($datos) {
+        $data = array();
+        $nombre = $datos['nombre'];
+        $email = $datos['email'];
+        $mensaje = $datos['mensaje'];
+        if ((!empty($nombre)) && (!empty($email)) && (!empty($mensaje))) {
+            $this->db->insert('frm_contacto', array(
+                'nombre' => utf8_decode($nombre),
+                'email' => $email,
+                'mensaje' => utf8_decode($mensaje),
+                'ip' => $this->helper->getReal_ip(),
+                'fecha' => date('Y-m-d H:i:s'),
+            ));
+            $asunto = 'Formulario de Contacto';
+            $message = "Este mensaje fue enviado por " . $nombre . chr(10) . chr(13);
+            $message .= "Desde la sgte Ip: " . $this->helper->getReal_ip() . chr(10) . chr(13);
+            $message .= "E-mail: " . $email . chr(10) . chr(13);
+            $message .= "Mensaje:" . $mensaje . chr(10) . chr(13);
+            $message .= "Enviado el " . date('Y-m-d H:i:s');
+            $this->helper->sendMail($email, $asunto, $message);
+            $data = '<i class="fa fa-check-circle-o" aria-hidden="true" style="font-size: 25px;"></i> Gracias por ponerte en contacto con nosotros. Su mensaje ha sido enviado.';
+            return $data;
+        }
+    }
+
 }
