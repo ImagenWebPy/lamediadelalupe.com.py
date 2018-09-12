@@ -104,20 +104,26 @@ foreach ($this->mostrarMenu as $val) {
                     <h3><?= $this->datosDirectores['titulo']; ?></h3>
                     <div class="row icon-set">
                         <?php foreach ($this->datosDirectores['directores'] as $director): ?>
-                            <div class="col-md-4 text-center">
-                                <p>
-                                    <i class="circle scroll-in-animation background-20 heading" data-animation="fadeInUp"><img class="img-responsive img-circle" src="<?= URL; ?>public/images/directores/<?= $director['imagen']; ?>" alt="<?= utf8_encode($director['nombre']); ?>"></i>
-                                </p>
-                                <p class="title"><span class="underline-text"><?= utf8_encode($director['nombre']); ?></span></p>
-                                <p><?= utf8_encode($director['cargo']); ?></p>
-                                <ul class="list-inline">
-                                    <li>
-                                        <a href="<?= utf8_encode($director['linkedin']); ?>"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="mailto:<?= utf8_encode($director['email']); ?>"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-                                    </li>
-                                </ul>
+                            <div class="col-md-4 col-sm-6  col-xs-6">
+                                <div class="hover-overlay">
+                                    <img alt="<?= utf8_encode($director['nombre']); ?>" src="<?= URL; ?>public/images/directores/<?= $director['imagen']; ?>" title="<?= utf8_encode($director['nombre']); ?>" class="fluid-width">
+                                    <div class="overlay background-90-b">
+                                        <div>
+                                            <div class="separator-small"></div>
+                                            <p class="text-center">
+                                                <a target="_blank" href="mailto:<?= utf8_encode($director['email']); ?>"><i class="fa fa-envelope-o"></i></a>
+                                                <a target="_blank" href="<?= utf8_encode($director['linkedin']); ?>"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="caption">
+                                    <p>
+                                        <span class="title"><?= utf8_encode($director['nombre']); ?></span>
+                                        <br/>
+                                        <span class="highlight"><?= utf8_encode($director['cargo']); ?></span>
+                                    </p>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -135,7 +141,7 @@ foreach ($this->mostrarMenu as $val) {
                         <?php foreach ($this->datosEquipo['integrantes'] as $equipo): ?>
                             <div class="col-md-3 col-sm-6  col-xs-6">
                                 <div class="hover-overlay">
-                                    <img alt="Mike Johnson" src="<?= URL; ?>public/images/equipo/<?= $equipo['imagen']; ?>" title="<?= utf8_encode($equipo['nombre']); ?>" class="fluid-width">
+                                    <img alt="<?= utf8_encode($equipo['nombre']); ?>" src="<?= URL; ?>public/images/equipo/<?= $equipo['imagen']; ?>" title="<?= utf8_encode($equipo['nombre']); ?>" class="fluid-width">
                                     <div class="overlay background-90-b">
                                         <div>
                                             <div class="separator-small"></div>
@@ -154,6 +160,11 @@ foreach ($this->mostrarMenu as $val) {
                                 </div>
                             </div>
                         <?php endforeach; ?>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8" style="float: none; margin: 0 auto; padding: 30px 0px;">
+                            <img class="img-responsive" src="<?= URL; ?>public/images/equipo/lamedia-equipo.jpg" alt="Equipo de la Media" />
+                        </div>
                     </div>
                     <h3><span class="highlight"><?= $this->datosValores['titulo']; ?></span></h3>
                     <div class="row">
@@ -184,7 +195,7 @@ foreach ($this->mostrarMenu as $val) {
                     <h2><?= $this->datosServicios['titulo']; ?></h2>
                     <div class="row">
                         <?php foreach ($this->datosServicios['servicios'] as $servicios): ?>
-                            <div class="col-md-3 top-line" style="height: 600px;">
+                            <div class="col-md-4 top-line" style="height: 600px;">
                                 <h4><?= utf8_encode($servicios['titulo']); ?></h4>
                                 <?= utf8_encode($servicios['contenido']); ?>
                             </div>
@@ -207,7 +218,7 @@ foreach ($this->mostrarMenu as $val) {
                     <div class="process">
                         <div class="row process-row">
                             <?php foreach ($this->datosHerramientas['herramientas'] as $herramienta): ?>
-                                <div class="col-md-3 process-step" style="height: 550px;">
+                                <div class="col-md-4 process-step" style="height: 550px;">
                                     <div class="process-box"><img class="img-responsive" src="<?= URL; ?>public/images/herramientas/<?= utf8_encode($herramienta['imagen']); ?>" style="position: relative; top: 10px;"></i></div>
                                     <p class="title"><?= utf8_encode($herramienta['titulo']); ?></p>
                                     <?= utf8_encode($herramienta['contenido']); ?>
@@ -229,14 +240,14 @@ foreach ($this->mostrarMenu as $val) {
                 </div>
                 <div class="gallery background-e" data-default-group="all" data-overlay=".gallery-overlay">
                     <div class="container-fluid">
-                        <div class="filter">
-                            <ul class="nav nav-pills text-center">
-                                <li><a class="hover-effect" data-group="all" href="#">Todos</a></li>
-                                <?php foreach ($this->datosClientes['tipos'] as $tipo): ?>
-                                    <li><a class="hover-effect" data-group="<?= $tipo['tipo']; ?>" href="#"><?= $tipo['tipo']; ?></a></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
+                        <!--                        <div class="filter">
+                                                    <ul class="nav nav-pills text-center">
+                                                        <li><a class="hover-effect" data-group="all" href="#">Todos</a></li>
+                        <?php foreach ($this->datosClientes['tipos'] as $tipo): ?>
+                                                                        <li><a class="hover-effect" data-group="<?= $tipo['tipo']; ?>" href="#"><?= $tipo['tipo']; ?></a></li>
+                        <?php endforeach; ?>
+                                                    </ul>
+                                                </div>-->
                         <div class="row">
                             <div class="grid">
                                 <?php foreach ($this->datosClientes['clientes'] as $cliente): ?>
@@ -320,7 +331,7 @@ foreach ($this->mostrarMenu as $val) {
                                            </div>
                                            <div class="col-md-6">
                                            <div class="text-left scroll-in-animation" data-animation="fadeInRight">
-                                               <form class="ajax-form" action="<?= URL; ?>clientes/contacto" data-message-class="colors-d background-95 heading border" method="post" novalidate="novalidate">
+                                                <form class="ajax-form" action="<?= URL; ?>clientes/contacto" data-message-class="colors-d background-95 heading border" method="post" novalidate="novalidate">
                                                     <div class="row">
                                                         <div class="col-md-6 control-group">
                                                             <div class="alt-placeholder">Nombre</div>
